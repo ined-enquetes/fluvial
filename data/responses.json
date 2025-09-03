@@ -1,0 +1,21 @@
+{
+  "responses": {
+    "bdd1df78-5833-4de2-9994-618e0dd9611e": {
+      "idno": "IE1231d",
+      "rech": [
+        {
+          "AuthEntity": "jcvd",
+          "AuthEntity@affiliation": [
+            "fight family"
+          ]
+        }
+      ],
+      "collDate": [
+        {
+          "collDate@start": "1999-07-12",
+          "collDate@end": "2002-05-20"
+        }
+      ]
+    }
+  }
+}

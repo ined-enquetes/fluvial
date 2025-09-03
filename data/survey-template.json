@@ -1,0 +1,410 @@
+{
+  "title": "Formulaire de métadonnées",
+  "pages": [
+    {
+      "name": "page1",
+      "elements": [
+        {
+          "type": "text",
+          "name": "idno",
+          "title": "Numéro d'identification"
+        },
+        {
+          "type": "text",
+          "name": "titl",
+          "title": "Titre"
+        },
+        {
+          "type": "tagbox",
+          "name": "ingeref",
+          "title": "Ingénieurs référents",
+          "choices": [
+            "Aurélie",
+            {
+              "value": "Efi ",
+              "text": " Efi"
+            },
+            "Gaspar",
+            "Géraldine"
+          ],
+          "choicesOrder": "random",
+          "placeholder": "Ajouter...",
+          "allowCustomChoices": true
+        },
+        {
+          "type": "text",
+          "name": "website",
+          "title": "Site web de l’enquête",
+          "inputType": "url"
+        },
+        {
+          "type": "file",
+          "name": "question1",
+          "title": "Logo de l’enquête",
+          "acceptedTypes": "image/*",
+          "filePlaceholder": "Glissez-déposez le logo ici ou cliquez sur le bouton ci-dessous pour sélectionner une image à télécharger."
+        }
+      ]
+    },
+    {
+      "name": "page2",
+      "title": "Informations Générales",
+      "elements": [
+        {
+          "type": "text",
+          "name": "subTitl",
+          "title": "Sous-titre"
+        },
+        {
+          "type": "text",
+          "name": "altTitl",
+          "title": "Titre alternatif"
+        },
+        {
+          "type": "text",
+          "name": "parTitl",
+          "title": "Titre traduit"
+        },
+        {
+          "type": "text",
+          "name": "IDNo@DOI",
+          "title": "DOI",
+          "description": "A remplir par l'équipe mise à disposition",
+          "placeholder": "10.48756/ined-IE0248-3138"
+        },
+        {
+          "type": "text",
+          "name": "question3",
+          "title": "Lien sur DataIned",
+          "description": "A remplir par l'équipe mise à disposition",
+          "inputType": "url",
+          "placeholder": "https://data.ined.fr/index.php/catalog/xxx"
+        },
+        {
+          "type": "comment",
+          "name": "abstract",
+          "title": "Résumé"
+        }
+      ]
+    },
+    {
+      "name": "page3",
+      "title": "ÉQUIPE DE RECHERCHE ET REMERCIEMENTS",
+      "elements": [
+        {
+          "type": "paneldynamic",
+          "name": "rech",
+          "title": "Équipe de recherche (et affiliation)",
+          "templateElements": [
+            {
+              "type": "text",
+              "name": "AuthEntity",
+              "minWidth": "150px",
+              "maxWidth": "50%",
+              "title": "NOM Prénom"
+            },
+            {
+              "type": "tagbox",
+              "name": "AuthEntity@affiliation",
+              "minWidth": "150px",
+              "maxWidth": "50%",
+              "startWithNewLine": false,
+              "title": "Affliliation",
+              "choices": [
+                "Ined"
+              ],
+              "allowCustomChoices": true
+            }
+          ]
+        },
+        {
+          "type": "paneldynamic",
+          "name": "contrib",
+          "title": "Autres contributeurs et remerciements (avec affiliation et rôle)",
+          "templateElements": [
+            {
+              "type": "text",
+              "name": "othId",
+              "minWidth": "150px",
+              "maxWidth": "33%",
+              "title": "NOM Prénom"
+            },
+            {
+              "type": "tagbox",
+              "name": "othId@affiliation",
+              "minWidth": "150px",
+              "maxWidth": "33%",
+              "startWithNewLine": false,
+              "title": "Affliliation",
+              "choices": [
+                "Ined"
+              ],
+              "allowCustomChoices": true
+            },
+            {
+              "type": "text",
+              "name": "othId@role",
+              "maxWidth": "33%",
+              "startWithNewLine": false,
+              "title": "Role"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "page4",
+      "title": "INSTITUTIONS RESPONSABLES DES DONNEES",
+      "elements": [
+        {
+          "type": "text",
+          "name": "prodDate",
+          "title": "Date de production",
+          "inputType": "date"
+        },
+        {
+          "type": "tagbox",
+          "name": "distrbtr",
+          "title": "Distributeur",
+          "choices": [
+            "Ined"
+          ],
+          "allowCustomChoices": true
+        },
+        {
+          "type": "text",
+          "name": "distDate",
+          "title": "Date de distribution",
+          "inputType": "date"
+        },
+        {
+          "type": "paneldynamic",
+          "name": "financer",
+          "title": "Financeurs",
+          "templateElements": [
+            {
+              "type": "text",
+              "name": "financer@name",
+              "minWidth": "150px",
+              "maxWidth": "33%",
+              "title": "Nom de l’institution"
+            },
+            {
+              "type": "text",
+              "name": "financer@role",
+              "minWidth": "150px",
+              "maxWidth": "33%",
+              "startWithNewLine": false,
+              "title": "Role"
+            },
+            {
+              "type": "text",
+              "name": "financer@number",
+              "minWidth": "150px",
+              "maxWidth": "33%",
+              "startWithNewLine": false,
+              "title": "Numéro du financement"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "page5",
+      "title": "CHAMP DE L’ENQUÊTE",
+      "elements": [
+        {
+          "type": "paneldynamic",
+          "name": "keywords",
+          "title": "Mots-clés",
+          "templateElements": [
+            {
+              "type": "text",
+              "name": "keyword",
+              "minWidth": "150px",
+              "maxWidth": "50%",
+              "title": "Mot-clé"
+            },
+            {
+              "type": "text",
+              "name": "keyword@vocabURI",
+              "minWidth": "150px",
+              "maxWidth": "50%",
+              "startWithNewLine": false,
+              "title": "URI",
+              "inputType": "url"
+            }
+          ]
+        },
+        {
+          "type": "tagbox",
+          "name": "topcClas@Ined",
+          "title": "Thèmes INED",
+          "choices": [
+            "1. Couple, famille, sexualité",
+            "2."
+          ],
+          "allowCustomChoices": true
+        },
+        {
+          "type": "tagbox",
+          "name": "topcClas@Cessda",
+          "title": "Thèmes CESSDA",
+          "choices": [
+            "1. Couple, famille, sexualité",
+            "2."
+          ],
+          "allowCustomChoices": true
+        },
+        {
+          "type": "tagbox",
+          "name": "nation",
+          "title": "Pays",
+          "allowCustomChoices": true
+        },
+        {
+          "type": "comment",
+          "name": "geogCover",
+          "title": "Couverture géographique"
+        },
+        {
+          "type": "text",
+          "name": "analyUnit",
+          "title": "Unité d'analyse"
+        },
+        {
+          "type": "comment",
+          "name": "universe",
+          "title": "Univers (Champs)"
+        },
+        {
+          "type": "text",
+          "name": "dataKind",
+          "title": "Type de données"
+        },
+        {
+          "type": "paneldynamic",
+          "name": "timePrd",
+          "title": "Période(s) couverte(s) par les données",
+          "templateElements": [
+            {
+              "type": "text",
+              "name": "timePrd@start",
+              "minWidth": "150px",
+              "maxWidth": "50%",
+              "title": "Début",
+              "inputType": "date"
+            },
+            {
+              "type": "text",
+              "name": "timePrd@end",
+              "minWidth": "150px",
+              "maxWidth": "50%",
+              "startWithNewLine": false,
+              "title": "Fin",
+              "inputType": "date"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "page6",
+      "title": "INFORMATIONS SUR LA COLLECTE",
+      "elements": [
+        {
+          "type": "paneldynamic",
+          "name": "collDate",
+          "title": "Dates de collecte",
+          "templateElements": [
+            {
+              "type": "text",
+              "name": "collDate@start",
+              "minWidth": "150px",
+              "maxWidth": "50%",
+              "title": "Début",
+              "inputType": "date"
+            },
+            {
+              "type": "text",
+              "name": "collDate@end",
+              "minWidth": "150px",
+              "maxWidth": "50%",
+              "startWithNewLine": false,
+              "title": "Fin",
+              "inputType": "date"
+            },
+            {
+              "type": "text",
+              "name": "collDate@cycle",
+              "minWidth": "150px",
+              "maxWidth": "50%",
+              "startWithNewLine": false,
+              "title": "Étape"
+            }
+          ]
+        },
+        {
+          "type": "paneldynamic",
+          "name": "dataCollectors",
+          "title": "Entité(s) responsable(s) de la collecte des données",
+          "templateElements": [
+            {
+              "type": "text",
+              "name": "dataCollector",
+              "minWidth": "150px",
+              "maxWidth": "50%",
+              "title": "Nom de l’institution"
+            },
+            {
+              "type": "text",
+              "name": "dataCollector@abbr",
+              "minWidth": "150px",
+              "maxWidth": "50%",
+              "startWithNewLine": false,
+              "title": "Sigle"
+            }
+          ]
+        },
+        {
+          "type": "paneldynamic",
+          "name": "collModeCV",
+          "title": "Mode de collecte des données",
+          "templateElements": [
+            {
+              "type": "text",
+              "name": "question4",
+              "title": "Vocabulaire contrôlé"
+            }
+          ]
+        },
+        {
+          "type": "comment",
+          "name": "collMode",
+          "title": "Mode de collecte des données - Détail"
+        },
+        {
+          "type": "text",
+          "name": "resInstruCV",
+          "title": "Instrument de collecte  - Vocabulaire contrôlé"
+        },
+        {
+          "type": "comment",
+          "name": "resInstru",
+          "title": "Instrument de collecte  - Détail"
+        },
+        {
+          "type": "comment",
+          "name": "collSitu",
+          "title": "Informations notables sur la collecte"
+        },
+        {
+          "type": "comment",
+          "name": "frequenc",
+          "title": "Fréquence de collecte"
+        }
+      ]
+    }
+  ],
+  "headerView": "advanced"
+}

@@ -34,3 +34,41 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Architecture
+```
+metadata-template/
+├── src/
+│   ├── app/
+│   │   ├── api/
+│   │   │   ├── admin/
+│   │   │   │   ├── instances/          # CRUD instances (admin only)
+│   │   │   │   │   └── route.ts
+│   │   │   │   ├── export/             # Export CSV
+│   │   │   │   │   └── [instanceId]/
+│   │   │   │   │       └── route.ts
+│   │   │   │   └── survey-template/    # Gestion template questionnaire
+│   │   │   │       └── route.ts
+│   │   │   ├── survey/
+│   │   │   │   ├── [token]/            # Accès survey par token
+│   │   │   │   │   └── route.ts
+│   │   │   │   └── save/               # Sauvegarde réponses
+│   │   │   │       └── route.ts
+│   │   │   └── ping/                   # Health check
+│   │   │       └── route.ts
+│   │   ├── admin/                      # Interface admin
+│   │   │   └── page.tsx
+│   │   ├── survey/
+│   │   │   └── [token]/                # Interface utilisateur
+│   │   │       └── page.tsx
+│   │   └── page.tsx                    # Page d'accueil
+│   ├── components/
+│   │   └── Survey.tsx                  # Votre composant SurveyJS
+│   ├── data/
+│   │   ├── survey-template.json        # Template questionnaire
+│   │   ├── instances.json              # Instances créées
+│   │   ├── responses.json              # Réponses sauvegardées
+│   │   └── admins.json                 # Tokens admin
+│   └── types/
+│       └── index.ts
+```

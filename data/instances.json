@@ -1,0 +1,12 @@
+{
+  "instances": [
+    {
+      "id": "b9f9324d-fedc-4a16-be71-7365c0a62ed1",
+      "name": "baba",
+      "token": "bdd1df78-5833-4de2-9994-618e0dd9611e",
+      "createdAt": "2025-09-02T14:00:43.005Z",
+      "createdBy": "thibaud.ritzenthaler@ined.fr",
+      "isActive": true
+    }
+  ]
+}
