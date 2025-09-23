@@ -3,6 +3,7 @@ import { loadResponses } from '@/lib/saveUtils';
 import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
 import adminsData from '@/data/admins.json';
+import { SurveyInstance } from '@/types';
 
 const INSTANCES_FILE = join(process.cwd(), 'data/instances.json');
 
@@ -21,7 +22,7 @@ export async function GET(
   try {
     // Charger les instances
     const instancesData = JSON.parse(readFileSync(INSTANCES_FILE, 'utf8'));
-    const instance = instancesData.instances.find((inst: any) => inst.id === instanceId);
+    const instance = instancesData.instances.find((inst: SurveyInstance) => inst.id === instanceId);
     
     if (!instance) {
       return NextResponse.json({ error: 'Instance non trouvée' }, { status: 404 });
@@ -32,8 +33,8 @@ export async function GET(
     
     // Trouver tous les tokens de cette instance (même instance peut avoir plusieurs tokens)
     const instanceTokens = instancesData.instances
-      .filter((inst: any) => inst.id === instanceId)
-      .map((inst: any) => inst.token);
+      .filter((inst: SurveyInstance) => inst.id === instanceId)
+      .map((inst: SurveyInstance) => inst.token);
 
     // Récupérer les réponses pour cette instance
     const instanceResponses = Object.entries(responsesData.responses)

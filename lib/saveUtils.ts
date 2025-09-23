@@ -40,7 +40,7 @@ export function saveResponses(responsesData: ResponsesData): void {
   }
 }
 
-export function saveTokenResponse(token: string, surveyData: Record<string, any>): void {
+export function saveTokenResponse(token: string, surveyData: Record<string, ResponsesData>): void {
   try {
     const responsesData = loadResponses();
     responsesData.responses[token] = surveyData;

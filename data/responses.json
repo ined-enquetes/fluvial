@@ -1,21 +1,144 @@
 {
   "responses": {
-    "bdd1df78-5833-4de2-9994-618e0dd9611e": {
-      "idno": "IE1231d",
+    "d30edc45-eae1-4127-80f0-d207aaf8789c": {
+      "idno": "IE0259",
+      "titl": "Migrations – Famille – Vieillissement dans les départements et régions d’Outre-mer 2 (2020-2021)",
+      "ingeref": [
+        "Elodie Floury"
+      ],
+      "website": "https://mfv2.site.ined.fr/",
+      "altTitl": "MFV-2",
+      "parTitl": "Migrations – Family – Ageing in the overseas departments 2 (2020-2021)",
+      "IDNo@DOI": "https://doi.org/10.48756/ined-IE0259-9302",
+      "abstract": "L’enquête « Migrations, Famille et Vieillissement », réalisée la première fois en 2009-2010, a été la première enquête ménage de grande ampleur spécifiquement dédiée aux départements et régions d’Outre-mer (DROM). Elle analyse et mesure les mutations sociodémographiques à l’œuvre dans chacun d’entre eux, permettant de souligner leurs spécificités. Cette enquête combine représentativité territoriale et comparabilité nationale, voire internationale. En plus d’approfondir la connaissance de ces départements souvent laissés de côté par les grandes enquêtes nationales, son ambition est également politique : elle a été pensée comme un instrument d’aide à l’élaboration et la mise en œuvre de politiques sociales et sanitaires adaptées à chacun d’eux. Le renouvellement de cette enquête en 2020-2021 vise à mettre en avant les évolutions qui ont eu lieu au cours des dix dernières années, afin d’anticiper celles à venir. L'enquête MFV a reçu du comité du label la qualité d’« enquête inter-régionale d'intérêt national » qui lui a également conféré le caractère « d'enquête obligatoire ».\n\n\nDans les DROM, les autorités publiques locales autant que les responsables nationaux qui ont à connaître de leurs réalités ont longtemps déploré un décalage entre l'importance des mutations sociodémographiques à l'œuvre (changements des structures et comportements familiaux, accélération des migrations, effets socio-économiques du vieillissement) et le niveau de l'information statistique disponible sur ces sujets dans ces départements. C'est pour répondre à ce besoin qu'a été conduite en 2009-2010, pour la première fois de manière coordonnée en Guadeloupe, Martinique, Guyane et à La Réunion, une enquête de grande ampleur sur les mutations de la vie familiale, les ressorts et les obstacles des parcours sociaux, l'impact des migrations et les évolutions des solidarités intergénérationnelles.\nForte des enseignements de cette première édition et de celle conduite à Mayotte en 2015-2016, l’enquête a été reconduite en 2020-2021 (MFV-2) dans les quatre DROM « historiques » (Guadeloupe, Martinique, Guyane et La Réunion). Le questionnaire réactualisé vise à approfondir la connaissance des dynamiques à l’œuvre dans ces départements et leurs évolutions au cours des dix dernières années, avec l’ambition d’en donner une vision prospective.\n\nL’enquête est construite autour de trois thèmes phares : \n-\tLes migrations, qui constituent l’un des défis majeurs de ces territoires, étudiées au prisme de plusieurs dimensions : les personnes qui partent, celles qui s'installent, autant que celles qui reviennent. L’enquête s'intéresse aussi aux natifs des DROM qui n'ont jamais quitté leur département, en essayant d'en comprendre les raisons.\n-\tLa famille, appréhendée au travers de différents sujets : les structures familiales et leurs évolutions, l’évolution des comportements de fécondité, les familles monoparentales, les grossesses précoces et naissances hors mariage, la proximité géographique entre les générations, etc.\n-\tLe vieillissement et les évolutions des solidarités familiales intergénérationnelles qui lui sont liées, des défis majeurs des prochaines années, particulièrement aux Antilles et à La Réunion.\n\nEnfin, parce que les DROM sont un creuset original de production, d'échanges et de mixité culturelle, l'enquête s’intéresse aux formes objectives de ce dynamisme culturel, aux pratiques et valeurs religieuses, et la place de la langue créole au sein des familles et aux réalités de sa transmission. D’autres thématiques, telles que les discriminations ou encore l’état de santé, sont également abordées.\n",
       "rech": [
         {
-          "AuthEntity": "jcvd",
-          "AuthEntity@affiliation": [
-            "fight family"
+          "AuthEnty": "BRETON Didier",
+          "AuthEnty@affiliation": [
+            "Ined",
+            "Université de Strasbourg"
           ]
+        },
+        {
+          "AuthEnty": "MARIE Claude-Valentin",
+          "AuthEnty@affiliation": [
+            "Ined"
+          ]
+        }
+      ],
+      "contrib": [
+        {
+          "othId@affiliation": [
+            "Ined"
+          ],
+          "othId@role": "Suivi de la création du questionnaire CAPI, formation des enquêteurs",
+          "othId": "ANTOINE Robin"
+        },
+        {
+          "othId": "BERTIN Chloé",
+          "othId@affiliation": [
+            "INSEE"
+          ],
+          "othId@role": "CPOS, suivi de l’enquête"
+        }
+      ],
+      "producerHandler": [
+        {
+          "producer": "Institut national d’études démographiques",
+          "producer@role": "Maîtrise d’ouvrage"
+        },
+        {
+          "producer": "Institut national de la statistique et des études économiques",
+          "producer@role": "Maîtrise d’œuvre"
+        }
+      ],
+      "prodDate": "2021-12-31",
+      "financer": [
+        {
+          "financer@name": "Laboratoire d’excellence Individus, Populations, Sociétés (iPOPs)",
+          "financer@role": "Financement de la collecte",
+          "financer@number": "B154"
+        },
+        {
+          "financer@name": "Aide de l’État gérée par l’Agence Nationale de la Recherche au titre du programme « Investissement d’avenir » portant la référence ANR-10-LABX-0089-013",
+          "financer@role": "Financement de la collecte",
+          "financer@number": "B154"
+        },
+        {
+          "financer@name": "Direction générale aux outre-mer (DGOM)",
+          "financer@role": "Financement de la collecte"
+        },
+        {
+          "financer@name": "Institut national de la Jeunesse et de l’Education populaire (INJEP)",
+          "financer@role": "Financement de l'exploitation, de la documentation et de l'archivage de l'enquête",
+          "financer@number": "B138"
+        }
+      ],
+      "keywords": [
+        {
+          "keyword": "IMMIGATION"
+        }
+      ],
+      "topcClas@Ined": [
+        "1. Couple, famille, sexualité"
+      ],
+      "topcClas@Cessda": [
+        14379,
+        14388,
+        14414
+      ],
+      "nation": [
+        "France",
+        "Guadeloupe",
+        "Martinique",
+        "French Guiana",
+        "Réunion"
+      ],
+      "geogCover": "Les 4 départements d’Outre-mer (DROM) dits « historiques » : la Guadeloupe, la Martinique, la Guyane française et La Réunion",
+      "analyUnit": 8428,
+      "universe": "L’enquête MFV-2 a été conduite auprès d’hommes et de femmes de 18 à 79 ans résidant en Guadeloupe, Martinique, Guyane ou à La Réunion en logement ordinaire au moment de l’enquête. Sont donc exclues de l’analyse les populations vivant en communauté (établissements hospitaliers, scolaires, communautés religieuses...), ainsi que celles vivant dans certains espaces géographiques.\nLes espaces géographiques enquêtés sont plus précisément : \n-\tLa Guadeloupe hors Les Saintes et La Désirade (environ 1,5 % des résidences principales). On dit que l’on tire un échantillon sur la Guadeloupe « continentale » auquel s’ajoute Marie Galante.\n-\tLa Martinique dans son entièreté \n-\tLa Guyane « côtière élargie » uniquement : les communes de Maripasoula, Papaichton, Grand-Santi, Sainte Elie, Ouanary, Camopi et Saül sont exclues du champ statistique. Les communes Iracoubo, Régina et Awala-Yalimapo ont été retirées du champ des enquêtes ménages à partir du T4 2018. D’autre part, il y a des exclusions d’îlots pour commodités d’enquête au sein des communes dans le champ statistique, de l’ordre de 2 à 3 % des logements. Au total, cette restriction de champ engendre une exclusion de l’ordre de 15 % des résidences principales en Guyane.\n-\tLa Réunion hors commune de Cilaos et cirque de Mafate.\n\nLes personnes interrogées se distinguent en trois grandes catégories :\n•\tLes natifs du département enquêté\n•\tLes « migrants-retour » : les natifs du département ayant connu une expérience d'émigration de plus de six mois consécutifs, et qui y sont réinstallés au moment de l'enquête\n•\tLes immigrants : les personnes non natives du département qui y sont installées au moment de l'enquête, qu’elles soient nées ailleurs en France ou à l’étranger\nAu total, 11 342 réponses ont été obtenues, constituant des échantillons représentatifs de la population âgée de 18 à 79 ans de chacun des départements : 3 005 en Guadeloupe, 2 734 en Martinique, 2 688 en Guyane, et 2 915 à La Réunion.\n",
+      "dataKind": "Données d'enquête",
+      "timePrd": [
+        {
+          "timePrd@start": "2020-01-01",
+          "timePrd@end": "2021-12-31"
         }
       ],
       "collDate": [
         {
-          "collDate@start": "1999-07-12",
-          "collDate@end": "2002-05-20"
+          "collDate@start": "2019-04-10",
+          "collDate@end": "2019-05-17",
+          "collDate@cycle": "Test CAPI en Guyane"
+        },
+        {
+          "collDate@start": "2019-05-02",
+          "collDate@end": "2019-05-24",
+          "collDate@cycle": "Test CAPI à La Réunion"
+        },
+        {
+          "collDate@start": "2020-01-01",
+          "collDate@end": "2021-12-31",
+          "collDate@cycle": "Collecte réelle"
         }
-      ]
+      ],
+      "dataCollectors": [
+        {
+          "dataCollector": "Institut national de la statistique et des études économiques",
+          "dataCollector@abbr": "INSEE"
+        }
+      ],
+      "collModeCV": [
+        27717,
+        27708
+      ],
+      "collMode": "L’enquête MFV-2 était initialement prévue pour être réalisée exclusivement en face-à-face avec une méthode d’assistance informatique (CAPI, Blaise), au domicile des enquêté.es. Cependant, la pandémie de COVID-19 a compliqué le processus de passation des questionnaires (suspension de la collecte à certaines périodes, et changement du mode de collecte). Le mode de passation par téléphone a ainsi été rendu nécessaire voire obligatoire par périodes. Pour plus d’informations à ce sujet, voir les « informations notables sur la collecte ».\nN’importe quelle personne du ménage pouvait répondre au TCM (tronc commun des ménages). La personne devant ensuite répondre au questionnaire MFV (individu Kish) était sélectionnée parmi les membres du ménage selon le protocole suivant : il s’agit, parmi les personnes âgées de 18 à 79 ans à la date de l’enquête dont le domicile en question est la résidence principale, de celle dont la date d’anniversaire est la plus proche de celle de la venue de l’enquêteur.trice de l’INSEE. En cas d’égalité de date d’anniversaire, c’est l’ordre alphabétique des prénoms qui détermine le Kish.\n",
+      "resInstruCV": [
+        16773
+      ],
+      "madProgedo": true
+    },
+    "7ff680d1-a037-4fa6-ade2-3acf308734b7": {
+      "idno": "IEENQUETE"
     }
   }
 }

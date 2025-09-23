@@ -8,7 +8,7 @@
     "backgroundOpacity": 1,
     "cssVariables": {
         "--sjs-font-family": "Open Sans",
-        "--sjs-font-size": "16px",
+        "--sjs-font-size": "12.8px",
         "--sjs-corner-radius": "4px",
         "--sjs-base-unit": "6.4px",
         "--sjs-shadow-small": "inset 0px 0px 0px 1px rgba(0, 0, 0, 0.15)",
@@ -96,7 +96,7 @@
     "header": {
         "height": 0,
         "mobileHeight": 0,
-        "inheritWidthFrom": "survey",
+        "inheritWidthFrom": "container",
         "textAreaWidth": 0,
         "backgroundImageFit": "cover",
         "backgroundImageOpacity": 100,

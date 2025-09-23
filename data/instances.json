@@ -1,10 +1,18 @@
 {
   "instances": [
     {
-      "id": "b9f9324d-fedc-4a16-be71-7365c0a62ed1",
-      "name": "baba",
-      "token": "bdd1df78-5833-4de2-9994-618e0dd9611e",
-      "createdAt": "2025-09-02T14:00:43.005Z",
+      "id": "f8551cb0-5268-4595-8fe2-76d7cb3646b1",
+      "name": "MFV2",
+      "token": "d30edc45-eae1-4127-80f0-d207aaf8789c",
+      "createdAt": "2025-09-04T15:04:11.294Z",
+      "createdBy": "thibaud.ritzenthaler@ined.fr",
+      "isActive": true
+    },
+    {
+      "id": "5fdd6325-c801-4bf2-a0bf-9c903019d760",
+      "name": "test",
+      "token": "7ff680d1-a037-4fa6-ade2-3acf308734b7",
+      "createdAt": "2025-09-08T10:13:22.866Z",
       "createdBy": "thibaud.ritzenthaler@ined.fr",
       "isActive": true
     }

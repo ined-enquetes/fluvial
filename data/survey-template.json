@@ -2,30 +2,35 @@
   "title": "Formulaire de métadonnées",
   "pages": [
     {
-      "name": "page1",
+      "name": "id",
+      "title": "Identification",
       "elements": [
         {
           "type": "text",
           "name": "idno",
-          "title": "Numéro d'identification"
+          "title": "Numéro d'identification",
+          "placeholder": "IE0xxx"
         },
         {
           "type": "text",
           "name": "titl",
-          "title": "Titre"
+          "title": "Titre",
+          "placeholder": "Titre de l’enquête"
         },
         {
           "type": "tagbox",
           "name": "ingeref",
-          "title": "Ingénieurs référents",
+          "title": "Ingénieur.es référent.es",
           "choices": [
-            "Aurélie",
-            {
-              "value": "Efi ",
-              "text": " Efi"
-            },
-            "Gaspar",
-            "Géraldine"
+            "Amandine STEPHAN ",
+            "Aurélie SANTOS",
+            "Efi MARKOU",
+            "Gaspar MASSIOT",
+            "Géraldine CHARRANCE ",
+            "Geraldine VIVIER",
+            "Patricia THAUVIN",
+            "Paul COCHET",
+            "Ruxandra BREDA-POPA"
           ],
           "choicesOrder": "random",
           "placeholder": "Ajouter...",
@@ -35,7 +40,8 @@
           "type": "text",
           "name": "website",
           "title": "Site web de l’enquête",
-          "inputType": "url"
+          "inputType": "url",
+          "placeholder": "nouvellenquete.site.ined.fr"
         },
         {
           "type": "file",
@@ -47,23 +53,26 @@
       ]
     },
     {
-      "name": "page2",
+      "name": "Informations Générales",
       "title": "Informations Générales",
       "elements": [
         {
           "type": "text",
           "name": "subTitl",
-          "title": "Sous-titre"
+          "title": "Sous-titre",
+          "placeholder": "Entrez le sous-titre de l’enquête."
         },
         {
           "type": "text",
           "name": "altTitl",
-          "title": "Titre alternatif"
+          "title": "Titre alternatif",
+          "placeholder": "EPIC, Virage, MFV, …."
         },
         {
           "type": "text",
           "name": "parTitl",
-          "title": "Titre traduit"
+          "title": "Titre traduit",
+          "placeholder": "Entrez le titre de l’enquête dans une autre langue (généralement l’anglais)."
         },
         {
           "type": "text",
@@ -83,12 +92,13 @@
         {
           "type": "comment",
           "name": "abstract",
-          "title": "Résumé"
+          "title": "Résumé",
+          "placeholder": "Entrez un résumé décrivant l’enquête, ses objectifs, les thématiques abordées, etc."
         }
       ]
     },
     {
-      "name": "page3",
+      "name": "ÉQUIPE DE RECHERCHE ET REMERCIEMENTS",
       "title": "ÉQUIPE DE RECHERCHE ET REMERCIEMENTS",
       "elements": [
         {
@@ -98,14 +108,14 @@
           "templateElements": [
             {
               "type": "text",
-              "name": "AuthEntity",
+              "name": "AuthEnty",
               "minWidth": "150px",
               "maxWidth": "50%",
               "title": "NOM Prénom"
             },
             {
               "type": "tagbox",
-              "name": "AuthEntity@affiliation",
+              "name": "AuthEnty@affiliation",
               "minWidth": "150px",
               "maxWidth": "50%",
               "startWithNewLine": false,
@@ -132,7 +142,7 @@
             {
               "type": "tagbox",
               "name": "othId@affiliation",
-              "minWidth": "150px",
+              "minWidth": "100px",
               "maxWidth": "33%",
               "startWithNewLine": false,
               "title": "Affliliation",
@@ -144,6 +154,7 @@
             {
               "type": "text",
               "name": "othId@role",
+              "minWidth": "100px",
               "maxWidth": "33%",
               "startWithNewLine": false,
               "title": "Role"
@@ -153,28 +164,56 @@
       ]
     },
     {
-      "name": "page4",
+      "name": "INSTITUTIONS RESPONSABLES DES DONNEES",
       "title": "INSTITUTIONS RESPONSABLES DES DONNEES",
       "elements": [
+        {
+          "type": "paneldynamic",
+          "name": "producerHandler",
+          "title": "Producteur (Nom, Rôle)",
+          "templateElements": [
+            {
+              "type": "text",
+              "name": "producer",
+              "maxWidth": "33%",
+              "title": "Nom de l’institution"
+            },
+            {
+              "type": "text",
+              "name": "producer@role",
+              "maxWidth": "33%",
+              "startWithNewLine": false,
+              "title": "Role"
+            }
+          ]
+        },
         {
           "type": "text",
           "name": "prodDate",
           "title": "Date de production",
+          "description": "A remplir par l'équipe Mise a dispo",
           "inputType": "date"
         },
         {
           "type": "tagbox",
           "name": "distrbtr",
           "title": "Distributeur",
+          "description": "A remplir par l'équipe Mise a dispo",
+          "defaultValueExpression": "Institut national d'études démographiques",
+          "readOnly": true,
           "choices": [
-            "Ined"
+            {
+              "value": "ined",
+              "text": "Institut national d'études démographiques"
+            }
           ],
-          "allowCustomChoices": true
+          "placeholder": ""
         },
         {
           "type": "text",
           "name": "distDate",
           "title": "Date de distribution",
+          "description": "A remplir par l'équipe Mise a dispo",
           "inputType": "date"
         },
         {
@@ -254,12 +293,22 @@
             "1. Couple, famille, sexualité",
             "2."
           ],
+          "choicesByUrl": {
+            "url": "https://vocabularies.cessda.eu/v2/codes/TopicClassification/4.2.2/fr/",
+            "valueName": "id",
+            "titleName": "title"
+          },
           "allowCustomChoices": true
         },
         {
           "type": "tagbox",
           "name": "nation",
           "title": "Pays",
+          "choicesByUrl": {
+            "url": "https://vocabularies.cessda.eu/v2/codes/CountryNamesAndCodes/1.0.0/en/",
+            "valueName": "title",
+            "titleName": "title"
+          },
           "allowCustomChoices": true
         },
         {
@@ -268,9 +317,14 @@
           "title": "Couverture géographique"
         },
         {
-          "type": "text",
+          "type": "dropdown",
           "name": "analyUnit",
-          "title": "Unité d'analyse"
+          "title": "Unité d'analyse",
+          "choicesByUrl": {
+            "url": "https://vocabularies.cessda.eu/v2/codes/AnalysisUnit/2.0.2/fr/",
+            "titleName": "title"
+          },
+          "placeholder": "Choisissez un élément."
         },
         {
           "type": "comment",
@@ -309,7 +363,7 @@
       ]
     },
     {
-      "name": "page6",
+      "name": "INFORMATIONS SUR LA COLLECTE",
       "title": "INFORMATIONS SUR LA COLLECTE",
       "elements": [
         {
@@ -367,16 +421,18 @@
           ]
         },
         {
-          "type": "paneldynamic",
+          "type": "tagbox",
           "name": "collModeCV",
           "title": "Mode de collecte des données",
-          "templateElements": [
-            {
-              "type": "text",
-              "name": "question4",
-              "title": "Vocabulaire contrôlé"
-            }
-          ]
+          "choices": [
+            "Item 1",
+            "Item 2",
+            "Item 3"
+          ],
+          "choicesByUrl": {
+            "url": "https://vocabularies.cessda.eu/v2/codes/ModeOfCollection/5.0.0/fr/",
+            "titleName": "title"
+          }
         },
         {
           "type": "comment",
@@ -384,9 +440,18 @@
           "title": "Mode de collecte des données - Détail"
         },
         {
-          "type": "text",
+          "type": "tagbox",
           "name": "resInstruCV",
-          "title": "Instrument de collecte  - Vocabulaire contrôlé"
+          "title": "Instrument de collecte",
+          "choices": [
+            "Item 1",
+            "Item 2",
+            "Item 3"
+          ],
+          "choicesByUrl": {
+            "url": "https://vocabularies.cessda.eu/v2/codes/TypeOfInstrument/1.1.2/fr/",
+            "titleName": "title"
+          }
         },
         {
           "type": "comment",
@@ -404,7 +469,178 @@
           "title": "Fréquence de collecte"
         }
       ]
+    },
+    {
+      "name": "INFORMATIONS GENERALES SUR L’ENQUETE",
+      "title": "INFORMATIONS GENERALES SUR L’ENQUETE\n",
+      "elements": [
+        {
+          "type": "tagbox",
+          "name": "timeMeth",
+          "title": "Méthode temporelle",
+          "description": "A remplir par l'équipe Mad",
+          "choices": [
+            "Item 4"
+          ],
+          "choicesByUrl": {
+            "url": "https://vocabularies.cessda.eu/v2/codes/TimeMethod/1.2.3/fr/",
+            "titleName": "title"
+          },
+          "placeholder": "Choisissez le(s) vocabulaire(s) contrôlé(s)."
+        },
+        {
+          "type": "tagbox",
+          "name": "sampProcVC",
+          "title": "Procédure d’échantillonnage (Vocabulaire controlé)",
+          "choices": [
+            "Item 4"
+          ],
+          "choicesByUrl": {
+            "url": "https://vocabularies.cessda.eu/v2/codes/SamplingProcedure/2.0.0/fr/",
+            "titleName": "title"
+          },
+          "placeholder": "Choisissez le(s) vocabulaire(s) contrôlé(s)."
+        },
+        {
+          "type": "comment",
+          "name": "sampProc",
+          "title": "Procédure d'échantillonnage : détail",
+          "placeholder": "Entrez ici des précisions sur la procédure d’échantillonnage."
+        },
+        {
+          "type": "comment",
+          "name": "respRate",
+          "title": "Taux de réponse",
+          "placeholder": "Entrez ici les informations sur le taux de réponse."
+        },
+        {
+          "type": "comment",
+          "name": "weight",
+          "title": "Pondérations",
+          "placeholder": "Entrez ici des précisions sur les pondérations."
+        },
+        {
+          "type": "comment",
+          "name": "cleanOps",
+          "title": "Apurement",
+          "placeholder": "Entrez ici des précisions sur l’apurement."
+        },
+        {
+          "type": "comment",
+          "name": "Évaluation de la qualité des données",
+          "placeholder": "Entrez ici des précisions sur la qualité des données."
+        }
+      ]
+    },
+    {
+      "name": "MODALITES D’ACCES AUX DONNEES",
+      "title": "MODALITES D’ACCES AUX DONNEES",
+      "elements": [
+        {
+          "type": "boolean",
+          "name": "madProgedo",
+          "title": "Mise à disposition d’un FPR (Fichier de Production et de Recherche) via Quetelet Progedo",
+          "description": "A remplir par l'équipe mise à disposition des données",
+          "labelTrue": "Oui",
+          "labelFalse": "Non",
+          "swapOrder": true
+        }
+      ]
+    },
+    {
+      "name": "CITATION BIBLIOGRAPHIQUE",
+      "title": "CITATION BIBLIOGRAPHIQUE",
+      "elements": [
+        {
+          "type": "comment",
+          "name": "citLONG",
+          "title": "Citation longue"
+        },
+        {
+          "type": "comment",
+          "name": "citCOURT",
+          "title": "Citation courte"
+        }
+      ]
+    },
+    {
+      "name": "RESSOURCES ASSOCIÉES A L’ENQUÊTE",
+      "title": "RESSOURCES ASSOCIÉES A L’ENQUÊTE",
+      "elements": [
+        {
+          "type": "paneldynamic",
+          "name": "relStdies",
+          "title": "Études reliées",
+          "templateElements": [
+            {
+              "type": "text",
+              "name": "relStdy",
+              "maxWidth": "50%",
+              "title": "Numéro et titre de l’enquête reliée\n",
+              "placeholder": "IE00XX - La famille et l'orientation scolaire au niveau de la 6ème (1963)"
+            },
+            {
+              "type": "text",
+              "name": "relStdy@URI",
+              "maxWidth": "33%",
+              "startWithNewLine": false,
+              "title": "DOI (si pas de DOI, URL DataIned)",
+              "inputType": "url",
+              "placeholder": "https://data.ined.fr/index.php/catalog/xxx"
+            }
+          ]
+        },
+        {
+          "type": "paneldynamic",
+          "name": "relMats",
+          "title": "Ressources associées",
+          "templateElements": [
+            {
+              "type": "text",
+              "name": "relMat",
+              "minWidth": "100px",
+              "maxWidth": "33%",
+              "title": "Nom du document",
+              "placeholder": "Nom du document à afficher dans DataIned"
+            },
+            {
+              "type": "text",
+              "name": "relMat@description",
+              "minWidth": "100px",
+              "maxWidth": "33%",
+              "startWithNewLine": false,
+              "title": "Description",
+              "placeholder": "Si besoin, la description de la ressource."
+            },
+            {
+              "type": "text",
+              "name": "question10",
+              "minWidth": "100px",
+              "maxWidth": "33%",
+              "startWithNewLine": false,
+              "title": "URL DataIned",
+              "inputType": "url",
+              "placeholder": "https://data.ined.fr/index.php/catalog/xx/download/xxxx"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "name": "relCit@arch",
+          "title": "Liens vers la bibliographie Archined",
+          "inputType": "url",
+          "placeholder": "Lien Archined vers la bibliographie de l’enquête."
+        },
+        {
+          "type": "text",
+          "name": "relCit@ged",
+          "title": "Liens vers la bibliographie Zotero",
+          "inputType": "url",
+          "placeholder": "Lien Zotero (GED) vers la bibliographie de l’enquête."
+        }
+      ]
     }
   ],
+  "questionsOnPageMode": "singlePage",
   "headerView": "advanced"
 }

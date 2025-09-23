@@ -4,6 +4,7 @@ import { Model, ITheme } from "survey-core";
 import { Survey } from "survey-react-ui";
 import 'survey-core/survey-core.css';
 import surveyTheme  from "@/data/survey_theme.json";
+import { ResponsesData } from '@/types';
 
 interface SurveyComponentProps {
   token: string;
@@ -56,7 +57,7 @@ export default function SurveyComponent({ token }: SurveyComponentProps) {
     }
   };
 
-  const saveSurveyData = async (surveyData: any) => {
+  const saveSurveyData = async (surveyData: ResponsesData) => {
     try {
       const response = await fetch('/api/survey/save', {
         method: 'POST',

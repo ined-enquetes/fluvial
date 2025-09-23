@@ -3,6 +3,7 @@ import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
 import { loadResponses } from '@/lib/saveUtils';
 import templateData from '@/data/survey-template.json';
+import { SurveyInstance } from '@/types';
 
 const INSTANCES_FILE = join(process.cwd(), 'data/instances.json');
 
@@ -25,7 +26,7 @@ export async function GET(
   
   // Trouver l'instance
   const instances = loadInstances();
-  const instance = instances.find((inst: any) => inst.token === token);
+  const instance = instances.find((inst: SurveyInstance) => inst.token === token);
   
   if (!instance || !instance.isActive) {
     return NextResponse.json({ error: 'Instance non trouvée' }, { status: 404 });

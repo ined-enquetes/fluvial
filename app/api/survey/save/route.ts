@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { saveTokenResponse, loadResponses } from '@/lib/saveUtils';
 import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
+import { SurveyInstance } from '@/types';
 
 const INSTANCES_FILE = join(process.cwd(), 'data/instances.json');
 
@@ -9,7 +10,7 @@ function findInstance(token: string) {
   try {
     if (!existsSync(INSTANCES_FILE)) return null;
     const data = JSON.parse(readFileSync(INSTANCES_FILE, 'utf8'));
-    return data.instances.find((inst: any) => inst.token === token);
+    return data.instances.find((inst: SurveyInstance) => inst.token === token);
   } catch {
     return null;
   }
