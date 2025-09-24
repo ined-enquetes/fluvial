@@ -1,0 +1,30 @@
+image: node:16
+
+stages:
+  - build
+  - deploy
+
+cache:
+  paths:
+    - node_modules/
+
+before_script:
+  - npm install
+
+build:
+  stage: build
+  script:
+    - npm run build
+  artifacts:
+    paths:
+      - .next
+      - public
+      - node_modules
+
+deploy:
+  stage: deploy
+  script:
+    - npm install --production
+    - npm run start
+  only:
+    - main  # Change this to your default branch
