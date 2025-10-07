@@ -256,6 +256,7 @@
           "type": "paneldynamic",
           "name": "keywords",
           "title": "Mots-clés",
+          "description": "Mots clés disponibles à cette adresse : https://thesauri.cessda.eu/elsst-5/en/?clang=fr",
           "templateElements": [
             {
               "type": "text",
@@ -281,7 +282,13 @@
           "title": "Thèmes INED",
           "choices": [
             "1. Couple, famille, sexualité",
-            "2."
+            "2. Naissance, Fécondité, Contraception",
+            "3. Espérance de vie, Mortalité, Santé",
+            "4. Migrations internationales, Discrimination, Intégration",
+            "5. Habitat, Environnement, Territoire",
+            "6. Genre, Inégalités hommes-femmes",
+            "7. Âge de la vie, Vieillissement",
+            "8. Populations du monde"
           ],
           "allowCustomChoices": true
         },
@@ -295,7 +302,7 @@
           ],
           "choicesByUrl": {
             "url": "https://vocabularies.cessda.eu/v2/codes/TopicClassification/4.2.2/fr/",
-            "valueName": "id",
+            "valueName": "notation",
             "titleName": "title"
           },
           "allowCustomChoices": true
@@ -604,7 +611,7 @@
               "placeholder": "Nom du document à afficher dans DataIned"
             },
             {
-              "type": "text",
+              "type": "comment",
               "name": "relMat@description",
               "minWidth": "100px",
               "maxWidth": "33%",

@@ -9,7 +9,7 @@ export interface SurveyInstance {
 }
 
 export interface ResponsesData {
-  responses: Record<string, Record<string, any>>; // token -> data
+   // token -> data
 }
 
 export interface SurveyTemplate {

@@ -50,9 +50,9 @@ export default function AdminPage() {
     }
   };
 
-  const exportCSV = async (instanceId: string) => {
+  const exportJSON = async (instanceId: string, instanceName: string) => {
     try {
-      const response = await fetch(`/api/admin/export/${instanceId}`, {
+      const response = await fetch(`/api/survey/${instanceId}/export`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       
@@ -61,7 +61,7 @@ export default function AdminPage() {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `responses-${instanceId}.csv`;
+        a.download = `${instanceName}-high-part.json`;
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);
@@ -120,10 +120,10 @@ export default function AdminPage() {
                     Ouvrir questionnaire
                   </a>
                   <button
-                    onClick={() => exportCSV(instance.id)}
+                    onClick={() => exportJSON(instance.id, instance.name)}
                     className="bg-purple-500 text-white p-2 mr-2"
                   >
-                    Exporter CSV
+                    Exporter JSON
                   </button>
                 </div>
               </div>

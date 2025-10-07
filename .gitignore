@@ -42,3 +42,5 @@ next-env.d.ts
 
 
 /data/admin*
+/data/responses/*
+!/data/responses/.gitkeep

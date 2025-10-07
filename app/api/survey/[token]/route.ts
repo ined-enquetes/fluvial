@@ -33,8 +33,8 @@ export async function GET(
   }
 
   // Récupérer les réponses existantes pour ce token
-  const responsesData = loadResponses();
-  const existingData = responsesData.responses[token] || {};
+  const responsesData = loadResponses(token);
+  const existingData = responsesData || {};
 
   return NextResponse.json({
     instance: {

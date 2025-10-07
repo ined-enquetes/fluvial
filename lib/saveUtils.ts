@@ -2,37 +2,41 @@ import { writeFileSync, readFileSync, existsSync, mkdirSync } from 'fs';
 import { join } from 'path';
 import { ResponsesData } from '@/types';
 
-const RESPONSES_FILE = join(process.cwd(), 'data/responses.json');
+const RESPONSES_FILE = join(process.cwd(), 'data/responses/');
 
-function ensureDataDirectory() {
-  const dirPath = join(process.cwd(), 'data');
-  if (!existsSync(dirPath)) {
-    mkdirSync(dirPath, { recursive: true });
+function ensureDataDirectory(folder : string) {
+  if (!existsSync(folder)) {
+    mkdirSync(folder, { recursive: true });
   }
 }
 
-export function loadResponses(): ResponsesData {
+export function loadResponses(token: string): ResponsesData {
+  const folder = RESPONSES_FILE + token;
+  const FILE = folder + '/responses.json'
+  
   try {
-    ensureDataDirectory();
+    ensureDataDirectory(folder);
     
-    if (!existsSync(RESPONSES_FILE)) {
-      const initialData: ResponsesData = { responses: {} };
-      writeFileSync(RESPONSES_FILE, JSON.stringify(initialData, null, 2));
+    if (!existsSync(FILE)) {
+      const initialData: ResponsesData = {};
+      writeFileSync(FILE, JSON.stringify(initialData, null, 2));
       return initialData;
     }
     
-    const data = JSON.parse(readFileSync(RESPONSES_FILE, 'utf8'));
+    const data = JSON.parse(readFileSync(FILE, 'utf8'));
     return data;
   } catch (error) {
     // console.error('Erreur chargement réponses:', error);
-    return { responses: {} };
+    return {};
   }
 }
 
-export function saveResponses(responsesData: ResponsesData): void {
+export function saveResponses(responsesData: Record<string, ResponsesData>, token: string): void {
+  const folder = join(RESPONSES_FILE, token);
+  const FILE = join(folder, '/responses.json')
   try {
-    //ensureDataDirectory();
-    writeFileSync(RESPONSES_FILE, JSON.stringify(responsesData, null, 2), 'utf8');
+    ensureDataDirectory(folder);
+    writeFileSync(FILE, JSON.stringify(responsesData, null, 2), 'utf8');
     // console.log(`💾 Réponses sauvegardées pour ${Object.keys(responsesData.responses).length} tokens`);
   } catch (error) {
     // console.error('❌ Erreur sauvegarde réponses:', error);
@@ -42,9 +46,7 @@ export function saveResponses(responsesData: ResponsesData): void {
 
 export function saveTokenResponse(token: string, surveyData: Record<string, ResponsesData>): void {
   try {
-    const responsesData = loadResponses();
-    responsesData.responses[token] = surveyData;
-    saveResponses(responsesData);
+    saveResponses(surveyData, token);
   } catch (error) {
     // console.error('❌ Erreur sauvegarde token:', error);
     throw error;
