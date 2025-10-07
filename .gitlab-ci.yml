@@ -9,7 +9,7 @@ cache:
     - node_modules/
 
 before_script:
-  - npm install
+  - npm i
 
 build:
   stage: build
