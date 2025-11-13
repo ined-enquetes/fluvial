@@ -15,6 +15,14 @@
       "createdAt": "2025-09-08T10:13:22.866Z",
       "createdBy": "thibaud.ritzenthaler@ined.fr",
       "isActive": true
+    },
+    {
+      "id": "853b2eec-062c-4dd6-bb44-43153ca04edf",
+      "name": "ExPaParM",
+      "token": "69fbca89-1256-49bc-900b-0fb1b36864c3",
+      "createdAt": "2025-10-28T13:59:31.686Z",
+      "createdBy": "thibaud.ritzenthaler@ined.fr",
+      "isActive": true
     }
   ]
 }
