@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react';
-import { Model, ITheme } from "survey-core";
+import { Model, ITheme, SurveyModel, Question } from "survey-core";
 import { Survey } from "survey-react-ui";
 
 import { CommentService } from '@/lib/commentService';
@@ -27,10 +27,8 @@ export default function SurveyComponent({ token }: SurveyComponentProps) {
   const [error, setError] = useState<string | null>(null);
   const [commentService] = useState(() => new CommentService(token));
   const [comments, setComments] = useState<Comment[]>([]);
-  const commentRootsRef = useRef<Map<string, ReactDOM.Root>>(new Map());
-  const handleAddCommentRef = useRef<(questionId: string, text: string) => Promise<void>>();
-  const handleDeleteCommentRef = useRef<(commentId: string) => Promise<void>>();
   const [currentUser, setCurrentUser] = useState<string>('');
+  const [commentsLoaded, setCommentsLoaded] = useState(false);
 
   // ---------- refs ----------
   const containerMapRef = useRef<Map<string, { container: HTMLElement; title: string }>>(
@@ -43,8 +41,10 @@ export default function SurveyComponent({ token }: SurveyComponentProps) {
     try {
       const loadedComments = await commentService.getComments();
       setComments(loadedComments);
+      setCommentsLoaded(true);
     } catch (error) {
       console.error('Failed to load comments:', error);
+      setCommentsLoaded(true);
     }
   };
   
@@ -63,7 +63,7 @@ export default function SurveyComponent({ token }: SurveyComponentProps) {
     setComments(prev => prev.filter(c => c.id !== commentId));
   };
 
-  const handleAfterRender = (sender: any, options: any) => {
+  const handleAfterRender = (sender: SurveyModel, options: { htmlElement: HTMLElement; question: Question }) => {
     const questionElement = options.htmlElement;
     const question = options.question;
     const questionName = question.name;
@@ -88,6 +88,7 @@ export default function SurveyComponent({ token }: SurveyComponentProps) {
 
   // ---------- (re)mount or update ---------- //
   const mountOrUpdate = (questionName: string) => {
+    // console.log("Mount or update")
     const info = containerMapRef.current.get(questionName);
     if (!info) return; // should never happen
 
@@ -114,6 +115,7 @@ export default function SurveyComponent({ token }: SurveyComponentProps) {
   };
 
   
+  // Function that is called firstly to generate the surveyJS part
   const loadSurvey = async () => {
     try {
       const response = await fetch(`/api/survey/${token}`);
@@ -122,7 +124,6 @@ export default function SurveyComponent({ token }: SurveyComponentProps) {
       }
 
       const { surveyJson, existingData } = await response.json();
-      
       const surveyModel = new Model(surveyJson);
       surveyModel.applyTheme(surveyTheme as ITheme);
       
@@ -143,6 +144,10 @@ export default function SurveyComponent({ token }: SurveyComponentProps) {
       surveyModel.onComplete.add(async (sender) => {
         await saveSurveyData(sender.data);
       });
+
+      // console.log("Attaching onAfterRenderQuestion Loading the Survey, commentsLoaded=", commentsLoaded);
+      // Attach listener right away -> attach empty containers to containerMapRef
+      surveyModel.onAfterRenderQuestion.add(handleAfterRender);
 
       setSurvey(surveyModel);
       setLoading(false);
@@ -185,37 +190,17 @@ export default function SurveyComponent({ token }: SurveyComponentProps) {
     loadComments()
   }, [token]);
 
-  useEffect(() => {
-   
-    survey?.onAfterRenderQuestion.add(handleAfterRender);
-
-    return () => {
-      survey?.onAfterRenderQuestion.remove(handleAfterRender);
-    };
-
-    
-  }, [comments, survey, currentUser]);
-
   // ---------- Effect that updates on data change ----------
   useEffect(() => {
-    console.log('🔄 Re-render triggered! Comments count:', comments.length);
-    // Re‑render every stored question whenever comments or user change
+    if (!commentsLoaded) return;
+    // console.log('🔄 Re-render triggered! Comments count:', comments.length);
+    // console.log('🔄 Re-render triggered! mapref count:', containerMapRef.current);
+
+    // Fill containerMapRef with comments whenever loaded comments or user change
     containerMapRef.current.forEach((_info, qName) => {
       mountOrUpdate(qName);
     });
-  }, [comments, currentUser]);
-
-  // ---------- Cleanup ----------
-  useEffect(() => {
-    return () => {
-      // Unmount all React roots
-      rootMapRef.current.forEach((root) => root.unmount?.());
-      rootMapRef.current.clear();
-      containerMapRef.current.clear();
-    };
-  }, []);
-
-  
+  }, [comments, currentUser, commentsLoaded]);
 
 
   if (loading) return <div className="p-8">Chargement du questionnaire...</div>;
