@@ -49,6 +49,36 @@
           "title": "Logo de l’enquête",
           "acceptedTypes": "image/*",
           "filePlaceholder": "Glissez-déposez le logo ici ou cliquez sur le bouton ci-dessous pour sélectionner une image à télécharger."
+        },
+        {
+          "type": "paneldynamic",
+          "name": "rspStmt",
+          "title": "Équipe de production des métadonnées",
+          "description": "A remplir par l'équipe Mise à Disposition",
+          "templateElements": [
+            {
+              "type": "text",
+              "name": "docDscr@AuthEnty",
+              "minWidth": "150px",
+              "maxWidth": "50%",
+              "title": "NOM Prénom"
+            },
+            {
+              "type": "tagbox",
+              "name": "docDscr@AuthEnty@affliliation",
+              "minWidth": "150px",
+              "maxWidth": "50%",
+              "startWithNewLine": false,
+              "title": "Affliliation",
+              "choices": [
+                {
+                  "value": "Service des enquêtes et des sondages, Ined",
+                  "text": "SES, Ined"
+                }
+              ],
+              "allowCustomChoices": true
+            }
+          ]
         }
       ]
     },
@@ -78,14 +108,14 @@
           "type": "text",
           "name": "IDNo@DOI",
           "title": "DOI",
-          "description": "A remplir par l'équipe mise à disposition",
+          "description": "A remplir par l'équipe Mise à Disposition",
           "placeholder": "10.48756/ined-IE0248-3138"
         },
         {
           "type": "text",
           "name": "question3",
           "title": "Lien sur DataIned",
-          "description": "A remplir par l'équipe mise à disposition",
+          "description": "A remplir par l'équipe Mise à Disposition",
           "inputType": "url",
           "placeholder": "https://data.ined.fr/index.php/catalog/xxx"
         },
@@ -152,7 +182,7 @@
               "allowCustomChoices": true
             },
             {
-              "type": "text",
+              "type": "comment",
               "name": "othId@role",
               "minWidth": "100px",
               "maxWidth": "33%",
@@ -173,13 +203,13 @@
           "title": "Producteur (Nom, Rôle)",
           "templateElements": [
             {
-              "type": "text",
+              "type": "comment",
               "name": "producer",
               "maxWidth": "33%",
               "title": "Nom de l’institution"
             },
             {
-              "type": "text",
+              "type": "comment",
               "name": "producer@role",
               "maxWidth": "33%",
               "startWithNewLine": false,
@@ -191,16 +221,15 @@
           "type": "text",
           "name": "prodDate",
           "title": "Date de production",
-          "description": "A remplir par l'équipe Mise a dispo",
+          "description": "A remplir par l'équipe Mise à Disposition",
           "inputType": "date"
         },
         {
           "type": "tagbox",
           "name": "distrbtr",
           "title": "Distributeur",
-          "description": "A remplir par l'équipe Mise a dispo",
+          "description": "A remplir par l'équipe Mise à Disposition",
           "defaultValueExpression": "Institut national d'études démographiques",
-          "readOnly": true,
           "choices": [
             {
               "value": "ined",
@@ -213,7 +242,7 @@
           "type": "text",
           "name": "distDate",
           "title": "Date de distribution",
-          "description": "A remplir par l'équipe Mise a dispo",
+          "description": "A remplir par l'équipe Mise à Disposition",
           "inputType": "date"
         },
         {
@@ -222,14 +251,14 @@
           "title": "Financeurs",
           "templateElements": [
             {
-              "type": "text",
+              "type": "comment",
               "name": "financer@name",
               "minWidth": "150px",
               "maxWidth": "33%",
               "title": "Nom de l’institution"
             },
             {
-              "type": "text",
+              "type": "comment",
               "name": "financer@role",
               "minWidth": "150px",
               "maxWidth": "33%",
@@ -237,7 +266,7 @@
               "title": "Role"
             },
             {
-              "type": "text",
+              "type": "comment",
               "name": "financer@number",
               "minWidth": "150px",
               "maxWidth": "33%",
@@ -259,20 +288,19 @@
           "description": "Mots clés disponibles à cette adresse : https://thesauri.cessda.eu/elsst-5/en/?clang=fr",
           "templateElements": [
             {
-              "type": "text",
+              "type": "comment",
               "name": "keyword",
               "minWidth": "150px",
               "maxWidth": "50%",
               "title": "Mot-clé"
             },
             {
-              "type": "text",
+              "type": "comment",
               "name": "keyword@vocabURI",
               "minWidth": "150px",
               "maxWidth": "50%",
               "startWithNewLine": false,
-              "title": "URI",
-              "inputType": "url"
+              "title": "URI"
             }
           ]
         },
@@ -324,9 +352,14 @@
           "title": "Couverture géographique"
         },
         {
-          "type": "dropdown",
+          "type": "tagbox",
           "name": "analyUnit",
           "title": "Unité d'analyse",
+          "choices": [
+            "Item 1",
+            "Item 2",
+            "Item 3"
+          ],
           "choicesByUrl": {
             "url": "https://vocabularies.cessda.eu/v2/codes/AnalysisUnit/2.0.2/fr/",
             "titleName": "title"
@@ -396,7 +429,7 @@
               "inputType": "date"
             },
             {
-              "type": "text",
+              "type": "comment",
               "name": "collDate@cycle",
               "minWidth": "150px",
               "maxWidth": "50%",
@@ -411,7 +444,7 @@
           "title": "Entité(s) responsable(s) de la collecte des données",
           "templateElements": [
             {
-              "type": "text",
+              "type": "comment",
               "name": "dataCollector",
               "minWidth": "150px",
               "maxWidth": "50%",
@@ -485,7 +518,7 @@
           "type": "tagbox",
           "name": "timeMeth",
           "title": "Méthode temporelle",
-          "description": "A remplir par l'équipe Mad",
+          "description": "A remplir par l'équipe Mise à Disposition",
           "choices": [
             "Item 4"
           ],
@@ -547,7 +580,7 @@
           "type": "boolean",
           "name": "madProgedo",
           "title": "Mise à disposition d’un FPR (Fichier de Production et de Recherche) via Quetelet Progedo",
-          "description": "A remplir par l'équipe mise à disposition des données",
+          "description": "A remplir par l'équipe Mise à Disposition",
           "labelTrue": "Oui",
           "labelFalse": "Non",
           "swapOrder": true
@@ -580,19 +613,18 @@
           "title": "Études reliées",
           "templateElements": [
             {
-              "type": "text",
+              "type": "comment",
               "name": "relStdy",
               "maxWidth": "50%",
               "title": "Numéro et titre de l’enquête reliée\n",
               "placeholder": "IE00XX - La famille et l'orientation scolaire au niveau de la 6ème (1963)"
             },
             {
-              "type": "text",
+              "type": "comment",
               "name": "relStdy@URI",
               "maxWidth": "33%",
               "startWithNewLine": false,
               "title": "DOI (si pas de DOI, URL DataIned)",
-              "inputType": "url",
               "placeholder": "https://data.ined.fr/index.php/catalog/xxx"
             }
           ]
@@ -603,7 +635,7 @@
           "title": "Ressources associées",
           "templateElements": [
             {
-              "type": "text",
+              "type": "comment",
               "name": "relMat",
               "minWidth": "100px",
               "maxWidth": "33%",
@@ -620,29 +652,26 @@
               "placeholder": "Si besoin, la description de la ressource."
             },
             {
-              "type": "text",
+              "type": "comment",
               "name": "question10",
               "minWidth": "100px",
               "maxWidth": "33%",
               "startWithNewLine": false,
               "title": "URL DataIned",
-              "inputType": "url",
               "placeholder": "https://data.ined.fr/index.php/catalog/xx/download/xxxx"
             }
           ]
         },
         {
-          "type": "text",
+          "type": "comment",
           "name": "relCit@arch",
           "title": "Liens vers la bibliographie Archined",
-          "inputType": "url",
           "placeholder": "Lien Archined vers la bibliographie de l’enquête."
         },
         {
-          "type": "text",
+          "type": "comment",
           "name": "relCit@ged",
           "title": "Liens vers la bibliographie Zotero",
-          "inputType": "url",
           "placeholder": "Lien Zotero (GED) vers la bibliographie de l’enquête."
         }
       ]
