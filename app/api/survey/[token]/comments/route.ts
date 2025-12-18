@@ -41,7 +41,7 @@ async function writeComments(token: string, data: SurveyComments): Promise<void>
   await fs.writeFile(filePath, JSON.stringify(data, null, 2), 'utf-8');
 }
 
-// GET - Récupérer tous les commentaires
+// GET - Get all comments
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ token: string }> }
@@ -60,7 +60,7 @@ export async function GET(
   }
 }
 
-// POST - Créer un nouveau commentaire
+// POST - Create new comment
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ token: string }> }
@@ -78,10 +78,9 @@ export async function POST(
       );
     }
     
-    // Lire les commentaires existants
     const data = await readComments(token);
     
-    // Créer le nouveau commentaire
+    // New comment
     const newComment: Comment = {
       id: `comment_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       questionId,
@@ -91,10 +90,8 @@ export async function POST(
       resolved: false,
     };
     
-    // Ajouter le commentaire
     data.comments.push(newComment);
     
-    // Sauvegarder
     await writeComments(token, data);
     
     return NextResponse.json(newComment, { status: 201 });

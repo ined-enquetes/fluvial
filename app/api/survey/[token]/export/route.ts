@@ -22,7 +22,7 @@ export async function GET(
   const { token } = await params;
   
   try {
-    // Charger les instances
+    // Load Instances
     const instancesData = JSON.parse(readFileSync(INSTANCES_FILE, 'utf8'));
     const instance = instancesData.instances.find((inst: SurveyInstance) => inst.id === token);
     if (!instance) {

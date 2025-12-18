@@ -127,20 +127,20 @@ export default function SurveyComponent({ token }: SurveyComponentProps) {
       const surveyModel = new Model(surveyJson);
       surveyModel.applyTheme(surveyTheme as ITheme);
       
-      // Charger les réponses existantes
+      // Load existing responses
       if (existingData && Object.keys(existingData).length > 0) {
         surveyModel.data = existingData;
       }
 
-      // Sauvegarde automatique à chaque changement de valeur
+      // Autosave when a field has changed
       surveyModel.onValueChanged.add(async (sender, options) => {
-        // console.log(`💾 Sauvegarde: ${options.name} = ${JSON.stringify(options.value)}`);
+        // console.log(`Save: ${options.name} = ${JSON.stringify(options.value)}`);
         
-        // Sauvegarder toutes les données du survey
+        // Save all survey data
         await saveSurveyData(sender.data);
       });
 
-      // Sauvegarde finale au submit (optionnel)
+      // Submit save (optional)
       surveyModel.onComplete.add(async (sender) => {
         await saveSurveyData(sender.data);
       });
@@ -164,15 +164,15 @@ export default function SurveyComponent({ token }: SurveyComponentProps) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           token,
-          surveyData // Envoyer toutes les données du survey
+          surveyData // Save all data of the survey
         })
       });
 
       if (!response.ok) {
-        // console.error('Erreur sauvegarde:', response.statusText);
+        // console.error('Save error:', response.statusText);
       }
     } catch (error) {
-      // console.error('Erreur réseau sauvegarde:', error);
+      // console.error('Network save error:', error);
     }
   };
 

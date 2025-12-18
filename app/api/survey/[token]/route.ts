@@ -24,7 +24,6 @@ export async function GET(
 ) {
   const { token } = await params;
   
-  // Trouver l'instance
   const instances = loadInstances();
   const instance = instances.find((inst: SurveyInstance) => inst.token === token);
   
@@ -32,7 +31,7 @@ export async function GET(
     return NextResponse.json({ error: 'Instance non trouvée' }, { status: 404 });
   }
 
-  // Récupérer les réponses existantes pour ce token
+  // Get responses for this token
   const responsesData = loadResponses(token);
   const existingData = responsesData || {};
 

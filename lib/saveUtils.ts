@@ -26,7 +26,7 @@ export function loadResponses(token: string): ResponsesData {
     const data = JSON.parse(readFileSync(FILE, 'utf8'));
     return data;
   } catch (error) {
-    // console.error('Erreur chargement réponses:', error);
+    // console.error('Loading save error:', error);
     return {};
   }
 }
@@ -37,9 +37,9 @@ export function saveResponses(responsesData: Record<string, ResponsesData>, toke
   try {
     ensureDataDirectory(folder);
     writeFileSync(FILE, JSON.stringify(responsesData, null, 2), 'utf8');
-    // console.log(`💾 Réponses sauvegardées pour ${Object.keys(responsesData.responses).length} tokens`);
+    // console.log(`Save responses for ${Object.keys(responsesData.responses).length} tokens`);
   } catch (error) {
-    // console.error('❌ Erreur sauvegarde réponses:', error);
+    // console.error('Save responses error:', error);
     throw error;
   }
 }
@@ -48,7 +48,7 @@ export function saveTokenResponse(token: string, surveyData: Record<string, Resp
   try {
     saveResponses(surveyData, token);
   } catch (error) {
-    // console.error('❌ Erreur sauvegarde token:', error);
+    // console.error('Save token error:', error);
     throw error;
   }
 }
