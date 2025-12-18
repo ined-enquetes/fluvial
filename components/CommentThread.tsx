@@ -68,7 +68,7 @@ function CommentThread({
 
   return (
     <div className="relative inline-block">
-      {/* Icône de commentaire */}
+      {/* Comment Icon */}
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-1 px-2 py-1 bg-blue-600 text-white rounded-full hover:bg-blue-700 shadow-md transition-all text-sm"
@@ -80,16 +80,13 @@ function CommentThread({
         )}
       </button>
 
-      {/* Popup de commentaires */}
+      {/* Comment Popup */}
       {isOpen && (
         <>
-          {/* Overlay transparent pour fermer */}
           <div
             className="fixed inset-0 z-40"
             onClick={() => setIsOpen(false)}
           />
-
-          {/* Carte de commentaires */}
           <div className="absolute right-0 top-10 w-80 bg-white rounded-lg shadow-2xl border border-gray-200 z-50 max-h-96 overflow-hidden flex flex-col">
             {/* Header */}
             <div className="bg-blue-600 text-white px-4 py-3 flex items-center justify-between rounded-t-lg">
@@ -102,7 +99,6 @@ function CommentThread({
               </button>
             </div>
 
-            {/* Liste des commentaires */}
             <div className="flex-1 overflow-y-auto p-3 space-y-2 bg-gray-50">
               {questionComments.length === 0 ? (
                 <p className="text-gray-500 text-center text-sm py-4">

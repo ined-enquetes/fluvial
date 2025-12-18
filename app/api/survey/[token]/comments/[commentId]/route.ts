@@ -28,7 +28,7 @@ async function writeComments(token: string, data: SurveyComments): Promise<void>
   await fs.writeFile(filePath, JSON.stringify(data, null, 2), 'utf-8');
 }
 
-// DELETE - Supprimer un commentaire
+// DELETE - Delete comment
 export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ token: string; commentId: string }> }
@@ -36,10 +36,9 @@ export async function DELETE(
   try {
     const { token, commentId } = await params;
     
-    // Lire les commentaires existants
+    // Read existing comments
     const data = await readComments(token);
     
-    // Trouver le commentaire à supprimer
     const commentIndex = data.comments.findIndex(c => c.id === commentId);
     
     if (commentIndex === -1) {
@@ -49,10 +48,10 @@ export async function DELETE(
       );
     }
     
-    // Supprimer le commentaire
+    // Delete the comment
     data.comments.splice(commentIndex, 1);
     
-    // Sauvegarder
+    // Save
     await writeComments(token, data);
     
     return NextResponse.json({ success: true });

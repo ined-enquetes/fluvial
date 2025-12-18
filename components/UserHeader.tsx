@@ -18,7 +18,6 @@ function UserHeader({ onUserNameChange }: UserHeaderProps) {
       setUserName(name);
       onUserNameChange?.(name);
     } else {
-      // Si pas de nom, ouvrir l'édition automatiquement
       setIsEditing(true);
     }
   }, [onUserNameChange]);
@@ -39,7 +38,7 @@ function UserHeader({ onUserNameChange }: UserHeaderProps) {
   };
 
   const handleCancel = () => {
-    // Ne permettre l'annulation que si un nom existe déjà
+    // Allow cancelling only if there is already a name
     if (userName) {
       setIsEditing(false);
       setTempName('');

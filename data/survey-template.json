@@ -218,6 +218,59 @@
           ]
         },
         {
+          "type": "paneldynamic",
+          "name": "distrbtr",
+          "title": "Distributeur",
+          "description": "A remplir par l'équipe Mise à Disposition",
+          "templateElements": [
+            {
+              "type": "dropdown",
+              "name": "distrbtr.name",
+              "maxWidth": "33%",
+              "title": "Nom de l’institution",
+              "choices": [
+                "Institut national d'études démographiques"
+              ],
+              "allowCustomChoices": true
+            },
+            {
+              "type": "dropdown",
+              "name": "distrbtr.ID",
+              "startWithNewLine": false,
+              "title": "Abbréviation",
+              "choices": [
+                "INED"
+              ],
+              "allowCustomChoices": true
+            },
+            {
+              "type": "dropdown",
+              "name": "distrbtr.abbr",
+              "maxWidth": "33%",
+              "startWithNewLine": false,
+              "title": "Attribut",
+              "choices": [
+                "Progedo-Ined"
+              ],
+              "allowCustomChoices": true
+            },
+            {
+              "type": "dropdown",
+              "name": "distrbtr.URI",
+              "maxWidth": "33%",
+              "startWithNewLine": false,
+              "title": "URL",
+              "choices": [
+                {
+                  "value": "https://www.ined.fr/",
+                  "text": "ined.fr"
+                }
+              ],
+              "allowCustomChoices": true
+            }
+          ]
+        },
+        {
           "type": "text",
           "name": "prodDate",
           "title": "Date de production",

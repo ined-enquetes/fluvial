@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
   try {
     const { token, surveyData } = await request.json();
     
-    // Vérifier que l'instance existe
+    // Verify that instance exists
     const instance = findInstance(token);
     if (!instance) {
       return NextResponse.json({ error: 'Token invalide' }, { status: 404 });
@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    // console.error('Erreur sauvegarde:', error);
+    // console.error('Saving error:', error);
     return NextResponse.json({ 
       error: 'Erreur lors de la sauvegarde' 
     }, { status: 500 });
