@@ -18,6 +18,11 @@
           "placeholder": "Titre de l’enquête"
         },
         {
+          "type": "text",
+          "name": "verStmt",
+          "title": "Version"
+        },
+        {
           "type": "tagbox",
           "name": "ingeref",
           "title": "Ingénieur.es référent.es",
