@@ -15,11 +15,11 @@ function getAdminEmail(token: string): string {
   return adminsData.admins.find(admin => admin.token === token)?.email ?? ""
 }
 
-// Charger les instances depuis le fichier
+// Load Instances form the file
 function loadInstances(): SurveyInstance[] {
   try {
     if (!existsSync(INSTANCES_FILE)) {
-      // Créer le fichier s'il n'existe pas
+      // Create the file if not existing
       writeFileSync(INSTANCES_FILE, JSON.stringify({ instances: [] }, null, 2));
       return [];
     }
@@ -27,19 +27,19 @@ function loadInstances(): SurveyInstance[] {
     const data = JSON.parse(readFileSync(INSTANCES_FILE, 'utf8'));
     return data.instances || [];
   } catch (error) {
-    // console.error('Erreur chargement instances:', error);
+    // console.error('Instances loading error:', error);
     return [];
   }
 }
 
-// Sauvegarder les instances dans le fichier
+// Save instance on files
 function saveInstances(instances: SurveyInstance[]) {
   try {
     const data = { instances };
     writeFileSync(INSTANCES_FILE, JSON.stringify(data, null, 2), 'utf8');
-    // console.log(`✅ ${instances.length} instances sauvegardées`);
+    // console.log(`${instances.length} saved instances`);
   } catch (error) {
-    // console.error('❌ Erreur sauvegarde:', error);
+    // console.error('Save error:', error);
     throw error;
   }
 }
@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
   try {
     const { name, allowedEmails } = await request.json();
     
-    // Charger les instances actuelles
+    // Load current instances
     const instances = loadInstances();
     
     const newInstance: SurveyInstance = {
@@ -78,10 +78,10 @@ export async function POST(request: NextRequest) {
       allowedEmails
     };
 
-    // Ajouter la nouvelle instance
+    // Add new instance
     instances.push(newInstance);
     
-    // Sauvegarder dans le fichier
+    // Save in file
     saveInstances(instances);
 
     return NextResponse.json({ 
@@ -91,7 +91,7 @@ export async function POST(request: NextRequest) {
     });
     
   } catch (error) {
-    // console.error('Erreur création instance:', error);
+    // console.error('Creation of instance error:', error);
     return NextResponse.json({ 
       error: 'Erreur lors de la création de l\'instance' 
     }, { status: 500 });
