@@ -23,7 +23,9 @@ jobs:
 
       # STEP A: Create the admins.json file before building
       - name: Create admins.json from Secret
-        run: echo '${{ secrets.ADMINS_JSON_CONTENT }}' > ./data/admins.json
+        run: |
+          echo '${{ secrets.ADMINS_TEST }}'
+          echo '${{ secrets.ADMINS_JSON_CONTENT }}' > ./data/admins.json
 
       - name: Detect package manager
         id: detect-package-manager
