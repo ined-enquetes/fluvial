@@ -283,20 +283,6 @@
           "inputType": "date"
         },
         {
-          "type": "tagbox",
-          "name": "distrbtr",
-          "title": "Distributeur",
-          "description": "A remplir par l'équipe Mise à Disposition",
-          "defaultValueExpression": "Institut national d'études démographiques",
-          "choices": [
-            {
-              "value": "ined",
-              "text": "Institut national d'études démographiques"
-            }
-          ],
-          "placeholder": ""
-        },
-        {
           "type": "text",
           "name": "distDate",
           "title": "Date de distribution",
