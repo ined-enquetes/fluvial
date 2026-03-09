@@ -1,0 +1,4 @@
+# .trivyignore
+# Faux positif : CVE dans l'utilitaire untgz (contrib/), non utilisé par Fluvial
+# Patch non encore disponible dans Alpine 3.23 stable
+CVE-2026-22184
