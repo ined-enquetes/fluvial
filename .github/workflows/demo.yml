@@ -22,12 +22,14 @@ jobs:
       - name: Créer admins.json de démo
         run: |
           cat > ./data/admins.json << 'EOF'
-          [
-            {
-              "email": "demo@example.com",
-              "password": "demo"
-            }
-          ]
+          {
+            "admins": [
+              {
+                "email": "demo@example.com",
+                "password": "demo"
+              }
+            ]
+          }
           EOF
 
       # Build de l'image Docker (utilise le Dockerfile du repo)
