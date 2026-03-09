@@ -1,5 +1,5 @@
 # docker-compose.yml — FLUVIAL
-# Compatible Docker Compose v2 (plugin integre à Docker CLI)
+# Compatible Docker Compose v2 (plugin intégré à Docker CLI)
 # Plus besoin de "version:" depuis la spec Compose v2
 
 services:
@@ -7,46 +7,46 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      # Passe le tag Node.js en argument de build pour faciliter les mises à jour
       args:
         NODE_VERSION: "22-alpine"
     image: fluvial:latest
 
-    # Redemarre automatiquement sauf si on l'arrete volontairement
     restart: unless-stopped
 
     ports:
-      # Syntaxe longue recommandee : plus lisible que "3000:3000"
       - target: 3000
         published: 3000
         protocol: tcp
 
     environment:
       NODE_ENV: production
-      # L'URL publique de l'application (utilisee par Next.js pour les redirections)
       NEXTAUTH_URL: "${NEXTAUTH_URL:-http://localhost:3000}"
 
-    # Les secrets et variables sensibles viennent d'un fichier .env
-    # (jamais commit dans git — voir .env.example ci-dessous)
     env_file:
       - .env
 
     volumes:
-      # Persistance des donnees JSON (reponses, instances, admins)
-      # Named volume gere par Docker : plus portable qu'un chemin absolu
+      # admins.json : lecture seule — ne doit jamais être modifié au runtime
+      # Le fichier vient de l'image, on le monte en ro pour l'expliciter
+      - type: bind
+        source: ./data/admins.json
+        target: /app/data/admins.json
+        read_only: true
+
+      # Données dynamiques dans un dossier dédié — named volumes sur dossiers uniquement
+      # instances.json et responses/ sont écrits par l'app à l'intérieur de ce dossier
       - fluvial_data:/app/data
 
-    # Contraintes de ressources — evite qu'un bug consomme tout le serveur -> a parametrer en fonction du serv
     deploy:
       resources:
         limits:
           cpus: "1.0"
           memory: 512M
+          pids: 1000
         reservations:
           cpus: "0.25"
           memory: 128M
 
-    # Healthcheck : Docker sait si l'app repond vraiment
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://localhost:3000/ || exit 1"]
       interval: 30s
@@ -54,25 +54,22 @@ services:
       retries: 3
       start_period: 40s
 
-    # Securite : le conteneur tourne en lecture seule sauf les volumes explicites
+    # Filesystem conteneur en lecture seule —
+    # seuls les volumes déclarés ci-dessus sont accessibles en écriture
     read_only: true
     tmpfs:
-      - /tmp          # Next.js a besoin d'ecrire dans /tmp
+      - /tmp              # Next.js a besoin d'écrire dans /tmp
       - /app/.next/cache  # Cache de rendu Next.js
 
-    # Empeche l'escalade de privileges
     security_opt:
       - no-new-privileges:true
 
-    # Supprime toutes les Linux capabilities (recommandation OWASP / CIS Benchmark)
-    # Node.js sur port > 1024 en user non-root n'en requiert aucune
     cap_drop:
       - ALL
 
     # Protection fork bomb — limite le nombre de processus fils
     pids_limit: 1000
 
-    # Ne tourne PAS en root
     user: "1001:1001"
 
     # Logging structure avec rotation pour eviter de saturer le disque
@@ -83,6 +80,5 @@ services:
         max-file: "3"
 
 volumes:
-  # Named volume declare explicitement pour la gestion via `docker volume`
   fluvial_data:
     driver: local
