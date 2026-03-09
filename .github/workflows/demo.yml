@@ -22,14 +22,7 @@ jobs:
       - name: Créer admins.json de démo
         run: |
           cat > ./data/admins.json << 'EOF'
-          {
-            "admins": [
-              {
-                "email": "demo@example.com",
-                "password": "demo"
-              }
-            ]
-          }
+          {"admins":[{"email":"demo@example.com","token":"demo"}]}
           EOF
 
       # Build de l'image Docker (utilise le Dockerfile du repo)
@@ -84,7 +77,7 @@ jobs:
               echo "   $URL"
               echo ""
               echo "👤 Login : demo@example.com"
-              echo "🔑 Mot de passe : demo"
+              echo "🔑 Token : demo"
               echo "🔧 Interface admin : $URL/admin"
               echo ""
               echo "⏱  La démo sera active pendant ~20 minutes"
