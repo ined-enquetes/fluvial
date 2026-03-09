@@ -1,0 +1,53 @@
+# .github/workflows/trivy.yml
+# Scan de sécurité de l'image Docker avec Trivy
+# Déclenchement : à chaque push sur main et sur chaque Pull Request
+
+name: Security Scan
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  # Optionnel : scan planifié toutes les nuits pour détecter les nouvelles CVEs
+  # même sans modification du code
+  schedule:
+    - cron: "0 2 * * *"
+
+jobs:
+  trivy:
+    name: Trivy CVE Scan
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      security-events: write   # nécessaire pour publier dans l'onglet Security
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t fluvial:${{ github.sha }} .
+
+      - name: Run Trivy — rapport complet
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: fluvial:${{ github.sha }}
+          format: sarif                    # format standard lisible par GitHub Security
+          output: trivy-results.sarif
+          severity: HIGH,CRITICAL
+
+      - name: Upload résultats dans GitHub Security
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: trivy-results.sarif
+
+      - name: Run Trivy — bloquant sur CRITICAL
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: fluvial:${{ github.sha }}
+          format: table
+          exit-code: "1"                   # fait échouer la pipeline
+          severity: CRITICAL               # uniquement les critiques bloquent
+          ignore-unfixed: true             # ignore les CVEs sans correctif disponible

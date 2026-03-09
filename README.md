@@ -108,7 +108,7 @@ For this application you'll need [NodeJS](https://nodejs.org/fr) and NPM install
 If you want to run the application locally, you can use the following :
 
 ```sh
-  npm run start
+  node .next/standalone/server.js
 ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>

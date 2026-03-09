@@ -1,0 +1,104 @@
+# .github/workflows/demo.yml
+# Lance une démo publique temporaire de FLUVIAL via Docker + tunnel Cloudflare
+# Déclenchement : manuel uniquement (workflow_dispatch)
+# Durée : 20 minutes, puis le workflow se termine et la démo est coupée
+
+name: Demo
+
+on:
+  workflow_dispatch:  # déclenchement manuel depuis l'onglet Actions
+
+jobs:
+  demo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25  # sécurité : GitHub tue le job au bout de 25 min quoi qu'il arrive
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Crée un admins.json avec les credentials de démo
+      # Pas de secret nécessaire : c'est un compte démo assumé
+      - name: Créer admins.json de démo
+        run: |
+          cat > ./data/admins.json << 'EOF'
+          [
+            {
+              "email": "demo@example.com",
+              "password": "demo"
+            }
+          ]
+          EOF
+
+      # Build de l'image Docker (utilise le Dockerfile du repo)
+      - name: Build image Docker
+        run: docker build -t fluvial:demo .
+
+      # Lance le conteneur en arrière-plan
+      - name: Démarrer le conteneur
+        run: |
+          docker run -d \
+            --name fluvial-demo \
+            -p 3000:3000 \
+            -e NODE_ENV=production \
+            -e NEXTAUTH_URL=http://localhost:3000 \
+            fluvial:demo
+
+      # Attend que l'app réponde avant d'ouvrir le tunnel
+      - name: Attendre que l'app soit prête
+        run: |
+          echo "Attente du démarrage de l'application..."
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:3000 > /dev/null 2>&1; then
+              echo "✅ Application prête"
+              break
+            fi
+            echo "  tentative $i/30..."
+            sleep 3
+          done
+
+      # Installe cloudflared et ouvre un tunnel public temporaire
+      # L'URL générée est unique et aléatoire — valable le temps du workflow
+      - name: Ouvrir le tunnel Cloudflare
+        run: |
+          # Installation de cloudflared
+          curl -fsSL https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 \
+            -o /usr/local/bin/cloudflared
+          chmod +x /usr/local/bin/cloudflared
+
+          # Lancement du tunnel en arrière-plan, URL capturée dans un fichier
+          cloudflared tunnel --url http://localhost:3000 --no-autoupdate \
+            2>&1 | tee /tmp/cloudflared.log &
+
+          # Attend que l'URL apparaisse dans les logs
+          echo "Attente de l'URL publique..."
+          for i in $(seq 1 20); do
+            URL=$(grep -o 'https://[a-z0-9-]*\.trycloudflare\.com' /tmp/cloudflared.log | head -1)
+            if [ -n "$URL" ]; then
+              echo ""
+              echo "======================================"
+              echo "🚀 DÉMO DISPONIBLE À L'ADRESSE :"
+              echo ""
+              echo "   $URL"
+              echo ""
+              echo "👤 Login : demo@example.com"
+              echo "🔑 Mot de passe : demo"
+              echo "🔧 Interface admin : $URL/admin"
+              echo ""
+              echo "⏱  La démo sera active pendant ~20 minutes"
+              echo "======================================"
+              break
+            fi
+            sleep 3
+          done
+
+      # Maintient le workflow actif 20 minutes, puis laisse le job se terminer
+      - name: Maintenir la démo active (20 min)
+        run: |
+          echo "Démo en cours... le workflow se terminera automatiquement dans 20 minutes."
+          sleep 1200
+
+      # Nettoyage (optionnel, GitHub nettoie de toute façon en fin de job)
+      - name: Arrêter le conteneur
+        if: always()
+        run: docker stop fluvial-demo || true
