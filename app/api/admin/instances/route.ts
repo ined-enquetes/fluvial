@@ -4,6 +4,7 @@ import { readFileSync, writeFileSync, existsSync } from 'fs';
 import { join } from 'path';
 import adminsData from '@/data/admins.json';
 import { SurveyInstance } from '@/types';
+import { archiveResponses, loadResponses, saveResponses } from '@/lib/saveUtils';
 
 const INSTANCES_FILE = join(process.cwd(), 'data/instances.json');
 
@@ -95,5 +96,108 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ 
       error: 'Erreur lors de la création de l\'instance' 
     }, { status: 500 });
+  }
+}
+
+export async function PUT(request: NextRequest) {
+  const token = request.headers.get('authorization')?.replace('Bearer ', '');
+
+  if (!token || !isValidAdmin(token)) {
+    return NextResponse.json({ error: 'Accès refusé' }, { status: 403 });
+  }
+
+  try {
+    const { id, name, allowedEmails, isActive, responseData } = await request.json();
+    let successMessage = 'Instance mise à jour';
+
+    if (!id) {
+      return NextResponse.json(
+        { error: 'ID de l’instance requis' },
+        { status: 400 }
+      );
+    }
+
+    const instances = loadInstances();
+
+    const index = instances.findIndex(instance => instance.id === id);
+
+    if (index === -1) {
+      return NextResponse.json(
+        { error: 'Instance introuvable' },
+        { status: 404 }
+      );
+    }
+
+    instances[index] = {
+      ...instances[index],
+      ...(name !== undefined ? { name } : {}),
+      ...(allowedEmails !== undefined ? { allowedEmails } : {}),
+      ...(isActive !== undefined ? { isActive } : {}),
+    };
+
+    saveInstances(instances);
+
+    // When there is responses data added in the payload
+    if (responseData) {
+
+      saveResponses(responseData, instances[index].token);
+      
+      successMessage = successMessage + ", new responses loaded"
+    }
+
+    return NextResponse.json({
+      instance: instances[index],
+      message: successMessage,
+    });
+  } catch (error) {
+    return NextResponse.json(
+      { error: "Erreur lors de la mise à jour de l'instance" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(request: NextRequest) {
+  const token = request.headers.get('authorization')?.replace('Bearer ', '');
+
+  if (!token || !isValidAdmin(token)) {
+    return NextResponse.json({ error: 'Accès refusé' }, { status: 403 });
+  }
+
+  try {
+    const { id } = await request.json();
+
+    if (!id) {
+      return NextResponse.json(
+        { error: 'ID de l’instance requis' },
+        { status: 400 }
+      );
+    }
+
+    const instances = loadInstances();
+
+    const instance = instances.find(i => i.id === id);
+
+    if (!instance) {
+      return NextResponse.json(
+        { error: 'Instance introuvable' },
+        { status: 404 }
+      );
+    }
+
+    const updatedInstances = instances.filter(i => i.id !== id);
+    archiveResponses(instance.token);
+
+    saveInstances(updatedInstances);
+
+    return NextResponse.json({
+      message: 'Instance supprimée',
+      deletedInstance: instance,
+    });
+  } catch (error) {
+    return NextResponse.json(
+      { error: "Erreur lors de la suppression de l'instance" },
+      { status: 500 }
+    );
   }
 }

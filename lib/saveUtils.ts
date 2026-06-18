@@ -1,4 +1,4 @@
-import { writeFileSync, readFileSync, existsSync, mkdirSync } from 'fs';
+import { writeFileSync, readFileSync, existsSync, mkdirSync, renameSync } from 'fs';
 import { join } from 'path';
 import { ResponsesData } from '@/types';
 
@@ -37,9 +37,25 @@ export function saveResponses(responsesData: Record<string, ResponsesData>, toke
   try {
     ensureDataDirectory(folder);
     writeFileSync(FILE, JSON.stringify(responsesData, null, 2), 'utf8');
-    // console.log(`Save responses for ${Object.keys(responsesData.responses).length} tokens`);
+    console.log(`Save responses for ${Object.keys(responsesData).length} tokens`);
   } catch (error) {
-    // console.error('Save responses error:', error);
+    console.error('Save responses error:', error);
+    throw error;
+  }
+}
+
+export function archiveResponses(token: string): void {
+  const folder = join(RESPONSES_FILE, token);
+  const folder_arch = join(RESPONSES_FILE, 'archives/',token)
+  const FILE = join(folder, 'responses.json')
+  const FILE_ARCH = join(folder_arch, '/responses.json')
+  try {
+    ensureDataDirectory(folder);
+    ensureDataDirectory(folder_arch);
+    renameSync(FILE, FILE_ARCH);
+    console.log(`File archived !`);
+  } catch (error) {
+    console.error('Cannot archive error:', error);
     throw error;
   }
 }
