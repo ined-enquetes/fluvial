@@ -35,6 +35,7 @@
         "tailwindcss@^4",
         "typescript@^5"
     ],
+    "version": "2026-beta-1",
     "codemeta:contIntegration": {
         "@id": "https://raw.githubusercontent.com/ined-enquetes/fluvial/main/.github/workflows/demo.yml"
     },
