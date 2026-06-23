@@ -1,0 +1,48 @@
+{
+    "@context": "https://w3id.org/codemeta/3.0",
+    "author": [
+        {
+            "email": "thibaud.ritzenthaler@ined.fr",
+            "name": "Ined",
+            "@id": "https://github.com/ined-enquetes",
+            "@type": "Organization"
+        },
+        {
+            "schema:author": "https://github.com/ined-enquetes",
+            "@type": "Role"
+        }
+    ],
+    "codeRepository": "https://github.com/ined-enquetes/fluvial",
+    "dateCreated": "2026-01-07",
+    "dateModified": "2026-06-18",
+    "description": "FLUVIAL is a application created by French Institute for Demographic Studies (INED), aiming to help collaborative documenting of the institution surveys', ultimately generate DDI Codebook files.",
+    "downloadUrl": "https://github.com/ined-enquetes/fluvial/releases",
+    "license": "https://spdx.org/licenses/CC-BY-NC-SA-4.0",
+    "name": "fluvial",
+    "programmingLanguage": "TypeScript",
+    "softwareRequirements": [
+        "next@^15.5.12",
+        "react@19.1.0",
+        "react-dom@19.1.0",
+        "survey-react-ui@^2.3.4",
+        "@eslint/eslintrc@^3",
+        "@tailwindcss/postcss@^4",
+        "@types/node@^20",
+        "@types/react@^19",
+        "@types/react-dom@^19",
+        "eslint@^9",
+        "eslint-config-next@15.5.0",
+        "tailwindcss@^4",
+        "typescript@^5"
+    ],
+    "codemeta:contIntegration": {
+        "@id": "https://raw.githubusercontent.com/ined-enquetes/fluvial/main/.github/workflows/demo.yml"
+    },
+    "continuousIntegration": "https://raw.githubusercontent.com/ined-enquetes/fluvial/main/.github/workflows/demo.yml",
+    "developmentStatus": "active",
+    "issueTracker": "https://api.github.com/repos/ined-enquetes/fluvial/issues",
+    "@type": [
+        "SoftwareSourceCode",
+        "SoftwareApplication"
+    ]
+}
