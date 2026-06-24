@@ -17,7 +17,7 @@
     "dateModified": "2026-06-18",
     "description": "FLUVIAL is a application created by French Institute for Demographic Studies (INED), aiming to help collaborative documenting of the institution surveys', ultimately generate DDI Codebook files.",
     "downloadUrl": "https://github.com/ined-enquetes/fluvial/releases",
-    "license": "https://spdx.org/licenses/CC-BY-NC-SA-4.0",
+    "license": "CC-BY-NC-SA-4.0-only",
     "name": "fluvial",
     "programmingLanguage": "TypeScript",
     "softwareRequirements": [

@@ -1,6 +1,6 @@
 {
-  "name": "metadata-template",
-  "version": "0.1.0",
+  "name": "fluvial",
+  "version": "2026-beta-1",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
