@@ -12,7 +12,7 @@ FROM node:${NODE_VERSION} AS builder
 WORKDIR /app
 COPY package.json package-lock.json ./
 # Reinstalle tout (devDependencies inclus) pour avoir le compilateur TypeScript
-RUN npm ci --force
+RUN npm ci
 COPY . .
 # Prepare le fichier admins depuis l'exemple si absent
 RUN [ -f data/admins.json ] || cp data/example.admins.json data/admins.json
