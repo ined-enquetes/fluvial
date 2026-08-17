@@ -12,7 +12,7 @@ FROM node:${NODE_VERSION} AS builder
 WORKDIR /app
 COPY package.json package-lock.json ./
 # Reinstalle tout (devDependencies inclus) pour avoir le compilateur TypeScript
-RUN npm ci
+RUN npm ci --force
 COPY . .
 # Prepare le fichier admins depuis l'exemple si absent
 RUN [ -f data/admins.json ] || cp data/example.admins.json data/admins.json
@@ -25,11 +25,7 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 
-# Force la mise à jour de zlib (CVE-2026-22184) et des paquets Alpine en attente
-# À retirer quand node:22.14.0-alpine embarquera zlib >= 1.3.2-r0
-RUN apk update && apk upgrade --no-cache
-
-# Utilisateur système dedie, sans shell ni mot de passe (uid 1001)
+# Cree un utilisateur non-root dedie (uid 1001)
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nextjs
 
