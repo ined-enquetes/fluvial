@@ -2,6 +2,17 @@
   "title": "Formulaire de métadonnées",
   "pages": [
     {
+      "name": "page1",
+      "title": "Pour vous aider à compléter les champs, reportez-vous à ce guide :\n",
+      "elements": [
+        {
+          "type": "html",
+          "name": "aide1",
+          "html": "<h4><i><a href=\"http://hdl.handle.net/20.500.12204/AYi60PA8Lg0aT10Rui9w\" target=\"_blank\">\nGuides Mise à Disposition d'Enquête. 1 - Les métadonnées. n°MAD01, Aubervilliers : http://hdl.handle.net/20.500.12204/AYi60PA8Lg0aT10Rui9w ↗</i></a><h4>"
+        }
+      ]
+    },
+    {
       "name": "id",
       "title": "Identification",
       "elements": [
