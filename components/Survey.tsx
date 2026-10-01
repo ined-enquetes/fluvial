@@ -6,6 +6,7 @@ import { Survey } from "survey-react-ui";
 
 import { CommentService } from '@/lib/commentService';
 import { getUserNameFromCookie } from '@/lib/cookiesUtils';
+import { getQuestionId } from '@/lib/questionId';
 
 import ReactDOM from 'react-dom/client';
 import 'survey-core/survey-core.css';
@@ -35,7 +36,7 @@ export default function SurveyComponent({ token }: SurveyComponentProps) {
   // repeated section (paneldynamic / "Add new") every row renders questions with
   // the same name, so the element is the only stable unique key.
   const targetMapRef = useRef<
-    Map<HTMLElement, { questionId: string; title: string; container: HTMLElement }>
+    Map<HTMLElement, { question: Question; sharedQuestionId: string; title: string; container: HTMLElement }>
   >(new Map());
   const rootMapRef = useRef<Map<HTMLElement, ReactDOM.Root>>(new Map());
 
@@ -77,6 +78,7 @@ export default function SurveyComponent({ token }: SurveyComponentProps) {
     container.style.position = 'absolute';
     container.style.right = '-20px';
     container.style.top = '0';
+    container.style.zIndex = '1';
 
     questionElement.style.position = 'relative';
     questionElement.appendChild(container);
@@ -88,8 +90,12 @@ export default function SurveyComponent({ token }: SurveyComponentProps) {
     const target = targetMapRef.current.get(questionElement);
     if (!target) return; // should never happen
 
-    const { container, questionId, title } = target;
+    const { container, question, sharedQuestionId, title } = target;
     const { comments: currentComments, currentUser: currentUserName } = latestRef.current;
+
+    // Recomputed on every render: a row that moved (entry removed above it)
+    // must follow its new position
+    const questionId = getQuestionId(question);
 
     // Get existing root or create a new one
     let root = rootMapRef.current.get(container);
@@ -102,6 +108,7 @@ export default function SurveyComponent({ token }: SurveyComponentProps) {
     root.render(
       <CommentThread
         questionId={questionId}
+        sharedQuestionId={sharedQuestionId}
         questionTitle={title}
         comments={currentComments}
         currentUser={currentUserName}
@@ -111,15 +118,22 @@ export default function SurveyComponent({ token }: SurveyComponentProps) {
     );
   };
 
+  // React refuses to unmount a root while it is still rendering (this cleanup
+  // runs from an effect of the page), hence the deferred call.
+  const disposeRoot = (root: ReactDOM.Root | undefined) => {
+    if (!root) return;
+    setTimeout(() => root.unmount(), 0);
+  };
+
   const unmountThread = (questionElement: HTMLElement) => {
     const target = targetMapRef.current.get(questionElement);
     if (!target) return;
 
     const root = rootMapRef.current.get(target.container);
-    root?.unmount();
     rootMapRef.current.delete(target.container);
     target.container.remove();
     targetMapRef.current.delete(questionElement);
+    disposeRoot(root);
   };
 
   // Called on every comments / user change: drop the rows that were removed
@@ -135,8 +149,8 @@ export default function SurveyComponent({ token }: SurveyComponentProps) {
         // Container lost during a re-render: drop the stale root and rebuild it
         const staleRoot = rootMapRef.current.get(target.container);
         if (staleRoot) {
-          staleRoot.unmount();
           rootMapRef.current.delete(target.container);
+          disposeRoot(staleRoot);
         }
         target.container = createContainer(questionElement);
       }
@@ -158,7 +172,10 @@ export default function SurveyComponent({ token }: SurveyComponentProps) {
     // Store where to mount
     targetMapRef.current.set(questionElement, {
       container,
-      questionId: question.name,
+      question,
+      // Comments saved before per-entry ids: a single thread for the field
+      // itself, shared by every row of the section
+      sharedQuestionId: question.name,
       title: question.title || question.name,
     });
 
