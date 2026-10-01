@@ -31,11 +31,18 @@ export default function SurveyComponent({ token }: SurveyComponentProps) {
   const [commentsLoaded, setCommentsLoaded] = useState(false);
 
   // ---------- refs ----------
-  const containerMapRef = useRef<Map<string, { container: HTMLElement; title: string }>>(
-    new Map()
-  );
-  const rootMapRef = useRef<Map<string, ReactDOM.Root>>(new Map());
+  // One entry per *rendered* question element (not per question name): inside a
+  // repeated section (paneldynamic / "Add new") every row renders questions with
+  // the same name, so the element is the only stable unique key.
+  const targetMapRef = useRef<
+    Map<HTMLElement, { questionId: string; title: string; container: HTMLElement }>
+  >(new Map());
+  const rootMapRef = useRef<Map<HTMLElement, ReactDOM.Root>>(new Map());
 
+  // Latest values, readable from the SurveyJS event handlers, which are
+  // registered once and would otherwise keep a stale closure.
+  const latestRef = useRef({ comments, currentUser });
+  latestRef.current = { comments, currentUser };
 
   const loadComments = async () => {
     try {
@@ -49,11 +56,12 @@ export default function SurveyComponent({ token }: SurveyComponentProps) {
   };
   
   const handleAddComment = async (questionId: string, text: string) => {
-    if (!currentUser) return;
+    const author = latestRef.current.currentUser;
+    if (!author) return;
     
     const newComment = await commentService.createComment(
       { questionId, text },
-      currentUser
+      author
     );
     setComments(prev => [...prev, newComment]);
   };
@@ -63,55 +71,100 @@ export default function SurveyComponent({ token }: SurveyComponentProps) {
     setComments(prev => prev.filter(c => c.id !== commentId));
   };
 
-  const handleAfterRender = (sender: SurveyModel, options: { htmlElement: HTMLElement; question: Question }) => {
-    const questionElement = options.htmlElement;
-    const question = options.question;
-    const questionName = question.name;
-    const questionTitle = question.title || questionName;
-
-    // Avoid duplicate containers
-    if (questionElement.querySelector('.comment-thread-container')) return;
-
-    // Create the contaier component
+  const createContainer = (questionElement: HTMLElement) => {
     const container = document.createElement('div');
     container.className = 'comment-thread-container';
     container.style.position = 'absolute';
     container.style.right = '-20px';
     container.style.top = '0';
-    
+
     questionElement.style.position = 'relative';
     questionElement.appendChild(container);
-
-    // Store where to mount later
-    containerMapRef.current.set(questionName, { container, title: questionTitle });
+    return container;
   };
 
   // ---------- (re)mount or update ---------- //
-  const mountOrUpdate = (questionName: string) => {
-    // console.log("Mount or update")
-    const info = containerMapRef.current.get(questionName);
-    if (!info) return; // should never happen
+  const mountOrUpdate = (questionElement: HTMLElement) => {
+    const target = targetMapRef.current.get(questionElement);
+    if (!target) return; // should never happen
 
-    const { container, title } = info;
+    const { container, questionId, title } = target;
+    const { comments: currentComments, currentUser: currentUserName } = latestRef.current;
 
     // Get existing root or create a new one
-    let root = rootMapRef.current.get(questionName);
+    let root = rootMapRef.current.get(container);
     if (!root) {
       root = ReactDOM.createRoot(container);
-      rootMapRef.current.set(questionName, root);
+      rootMapRef.current.set(container, root);
     }
 
     // Render the CommentThread with the latest props
     root.render(
       <CommentThread
-        questionId={questionName}
+        questionId={questionId}
         questionTitle={title}
-        comments={comments}
-        currentUser={currentUser}
+        comments={currentComments}
+        currentUser={currentUserName}
         onAddComment={handleAddComment}
         onDeleteComment={handleDeleteComment}
       />
     );
+  };
+
+  const unmountThread = (questionElement: HTMLElement) => {
+    const target = targetMapRef.current.get(questionElement);
+    if (!target) return;
+
+    const root = rootMapRef.current.get(target.container);
+    root?.unmount();
+    rootMapRef.current.delete(target.container);
+    target.container.remove();
+    targetMapRef.current.delete(questionElement);
+  };
+
+  // Called on every comments / user change: drop the rows that were removed
+  // from the form and refresh every remaining thread.
+  const syncThreads = () => {
+    targetMapRef.current.forEach((target, questionElement) => {
+      if (!questionElement.isConnected) {
+        // Row deleted (or its element replaced by React)
+        unmountThread(questionElement);
+        return;
+      }
+      if (!questionElement.contains(target.container)) {
+        // Container lost during a re-render: drop the stale root and rebuild it
+        const staleRoot = rootMapRef.current.get(target.container);
+        if (staleRoot) {
+          staleRoot.unmount();
+          rootMapRef.current.delete(target.container);
+        }
+        target.container = createContainer(questionElement);
+      }
+      mountOrUpdate(questionElement);
+    });
+  };
+
+  const handleAfterRender = (sender: SurveyModel, options: { htmlElement: HTMLElement; question: Question }) => {
+    const questionElement = options.htmlElement;
+    const question = options.question;
+
+    // Already handled (this exact element already has a thread)
+    if (targetMapRef.current.has(questionElement)) return;
+
+    // Create the container component
+    const existing = questionElement.querySelector<HTMLElement>('.comment-thread-container');
+    const container = existing ?? createContainer(questionElement);
+
+    // Store where to mount
+    targetMapRef.current.set(questionElement, {
+      container,
+      questionId: question.name,
+      title: question.title || question.name,
+    });
+
+    // Mount straight away: rows added with "Add new" have no state change to
+    // wait for
+    mountOrUpdate(questionElement);
   };
 
   
@@ -146,7 +199,7 @@ export default function SurveyComponent({ token }: SurveyComponentProps) {
       });
 
       // console.log("Attaching onAfterRenderQuestion Loading the Survey, commentsLoaded=", commentsLoaded);
-      // Attach listener right away -> attach empty containers to containerMapRef
+      // Attach listener right away -> one thread container per rendered question
       surveyModel.onAfterRenderQuestion.add(handleAfterRender);
 
       setSurvey(surveyModel);
@@ -193,13 +246,8 @@ export default function SurveyComponent({ token }: SurveyComponentProps) {
   // ---------- Effect that updates on data change ----------
   useEffect(() => {
     if (!commentsLoaded) return;
-    // console.log('🔄 Re-render triggered! Comments count:', comments.length);
-    // console.log('🔄 Re-render triggered! mapref count:', containerMapRef.current);
 
-    // Fill containerMapRef with comments whenever loaded comments or user change
-    containerMapRef.current.forEach((_info, qName) => {
-      mountOrUpdate(qName);
-    });
+    syncThreads();
   }, [comments, currentUser, commentsLoaded]);
 
 
