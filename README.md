@@ -121,6 +121,8 @@ If you want to run the application locally, you can use the following :
 ### Admin Interface
 You can access to the adinistration of the website by going to the following URL : **https://[your-webiste]/admin**
 
+Each questionnaire instance has a **Historique des modifications** button. It lists the changes made to the answers: date, author, source (questionnaire or JSON import) and the old → new value of each modified field. The history is stored per questionnaire in `data/responses/[token]/history/`.
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## Architecture
@@ -155,9 +157,11 @@ metadata-template/
     │   └── UserHeader.tsx                # Header display for name management
     ├── data/
     │   ├── responses/                    # Responses list
-    │   │   └──[token]/                   # Survey Token
-    │   │       ├── comments.json         # Comments of survey
-    │   │       └── responses.json        # Responses of Survey
+    │   │   ├──[token]/                   # Survey Token
+    │   │   │   ├── comments.json         # Comments of survey
+    │   │   │   ├── history/              # Change history (one file per editing session)
+    │   │   │   └── responses.json        # Responses of Survey
+    │   │   └── archives/                 # Deleted questionnaires (whole folder moved here)
     │   ├── survey-template.json          # Template questionnaire
     │   ├── instances.json                # Instances
     │   └── admins.json                   # Tokens admin

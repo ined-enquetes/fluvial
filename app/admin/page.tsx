@@ -1,7 +1,29 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { SurveyInstance } from '@/types';
+import { HistoryEntry, SurveyInstance } from '@/types';
+
+function formatHistoryValue(value: unknown): string {
+  if (value === null || value === undefined || value === '') return '—';
+  if (typeof value === 'string') return value;
+  if (typeof value === 'number' || typeof value === 'boolean') return String(value);
+
+  try {
+    return JSON.stringify(value);
+  } catch {
+    return String(value);
+  }
+}
+
+function formatHistoryDate(timestamp: string): string {
+  const date = new Date(timestamp);
+  if (Number.isNaN(date.getTime())) return timestamp;
+
+  return date.toLocaleString('fr-FR', {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  });
+}
 
 export default function AdminPage() {
   const [instances, setInstances] = useState<SurveyInstance[]>([]);
@@ -21,6 +43,12 @@ export default function AdminPage() {
 
   const [deleteTarget, setDeleteTarget] = useState<SurveyInstance | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState('');
+
+  const [historyTarget, setHistoryTarget] = useState<SurveyInstance | null>(null);
+  const [historyEntries, setHistoryEntries] = useState<HistoryEntry[]>([]);
+  const [historyTitles, setHistoryTitles] = useState<Record<string, string>>({});
+  const [historyLoading, setHistoryLoading] = useState(false);
+  const [historyError, setHistoryError] = useState('');
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [importTarget, setImportTarget] = useState<SurveyInstance | null>(null);
@@ -285,6 +313,41 @@ export default function AdminPage() {
     }
   };
 
+  const openHistory = async (instance: SurveyInstance) => {
+    setHistoryTarget(instance);
+    setHistoryEntries([]);
+    setHistoryTitles({});
+    setHistoryError('');
+    setHistoryLoading(true);
+
+    try {
+      const response = await fetch(`/api/admin/instances/${instance.id}/history`, {
+        headers: authHeaders,
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setHistoryEntries(data.history ?? []);
+        setHistoryTitles(data.questionTitles ?? {});
+      } else if (response.status === 403) {
+        setHistoryError('Token admin invalide.');
+      } else {
+        setHistoryError("Impossible de charger l'historique.");
+      }
+    } catch {
+      setHistoryError("Erreur réseau lors du chargement de l'historique.");
+    } finally {
+      setHistoryLoading(false);
+    }
+  };
+
+  const closeHistory = () => {
+    setHistoryTarget(null);
+    setHistoryEntries([]);
+    setHistoryTitles({});
+    setHistoryError('');
+  };
+
   const connected = adminConnect;
 
   return (
@@ -428,6 +491,13 @@ export default function AdminPage() {
                         </button>
 
                         <button
+                          onClick={() => openHistory(instance)}
+                          className="inline-flex items-center justify-center rounded-2xl border border-[#eee] bg-white px-4 py-3 text-sm font-medium text-black transition hover:border-[#ff564e] hover:text-[#ff564e] hover:cursor-pointer"
+                        >
+                          Historique des modifications
+                        </button>
+
+                        <button
                           onClick={() => openImportPicker(instance)}
                           disabled={actionLoadingId === instance.id}
                           className="inline-flex items-center justify-center rounded-2xl border border-[#eee] bg-white px-4 py-3 text-sm font-medium text-black transition hover:border-[#ff564e] hover:text-[#ff564e] disabled:opacity-50 hover:cursor-pointer"
@@ -551,6 +621,110 @@ export default function AdminPage() {
                 >
                   {actionLoadingId === deleteTarget.id ? 'Suppression…' : 'Supprimer'}
                 </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {historyTarget && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4 py-6">
+            <div className="flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-[28px] bg-white shadow-2xl">
+              <div className="flex items-start justify-between gap-4 border-b border-[#eee] px-6 py-5">
+                <div>
+                  <h2 className="text-2xl font-semibold tracking-tight text-black">
+                    Historique des modifications
+                  </h2>
+                  <p className="mt-1 text-sm text-black/55">
+                    {historyTarget.name}
+                    {!historyLoading && !historyError && (
+                      <>
+                        {' · '}
+                        {historyEntries.length} modification
+                        {historyEntries.length > 1 ? 's' : ''}
+                      </>
+                    )}
+                  </p>
+                </div>
+                <button
+                  onClick={closeHistory}
+                  className="rounded-2xl border border-[#eee] bg-white px-4 py-2 text-sm font-medium text-black transition hover:border-[#ff564e] hover:text-[#ff564e]"
+                >
+                  Fermer
+                </button>
+              </div>
+
+              <div className="overflow-y-auto px-6 py-5">
+                {historyLoading && (
+                  <p className="text-sm text-black/55">Chargement de l’historique…</p>
+                )}
+
+                {historyError && (
+                  <p className="text-sm text-[#ff564e]">{historyError}</p>
+                )}
+
+                {!historyLoading && !historyError && historyEntries.length === 0 && (
+                  <div className="rounded-2xl border border-dashed border-[#eee] px-4 py-10 text-center text-sm text-black/55">
+                    Aucune modification enregistrée pour le moment.
+                  </div>
+                )}
+
+                {!historyLoading && !historyError && historyEntries.length > 0 && (
+                  <ol className="space-y-3">
+                    {historyEntries.map((entry) => (
+                      <li
+                        key={entry.id}
+                        className="rounded-2xl border border-[#eee] p-4"
+                      >
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <span className="text-sm font-medium text-black">
+                            {formatHistoryDate(entry.updatedAt ?? entry.timestamp)}
+                          </span>
+                          <div className="flex flex-wrap items-center gap-2 text-xs">
+                            <span className="rounded-full bg-[#eee] px-2.5 py-1 font-medium text-black">
+                              {entry.author}
+                            </span>
+                            <span
+                              className={`rounded-full px-2.5 py-1 font-medium ${
+                                entry.source === 'import'
+                                  ? 'bg-black text-white'
+                                  : 'bg-[#ff564e]/10 text-[#ff564e]'
+                              }`}
+                            >
+                              {entry.source === 'import' ? 'Import' : 'Questionnaire'}
+                            </span>
+                          </div>
+                        </div>
+
+                        <ul className="mt-3 space-y-2 text-sm">
+                          {entry.changes.map((change) => {
+                            const title = historyTitles[change.field];
+
+                            return (
+                              <li key={change.field} className="break-words">
+                                <span className="font-medium text-black">
+                                  {title || change.field}
+                                </span>
+                                {title && (
+                                  <span className="ml-1 text-xs text-black/40">
+                                    {change.field}
+                                  </span>
+                                )}
+                                <span className="text-black/45"> : </span>
+                                <span className="text-black/55 line-through">
+                                  {formatHistoryValue(change.oldValue)}
+                                </span>
+                                <span className="mx-1 text-black/45">→</span>
+                                <span className="font-medium text-black">
+                                  {formatHistoryValue(change.newValue)}
+                                </span>
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      </li>
+                    ))}
+                  </ol>
+                )}
               </div>
             </div>
           </div>

@@ -4,7 +4,7 @@ import { readFileSync, writeFileSync, existsSync } from 'fs';
 import { join } from 'path';
 import adminsData from '@/data/admins.json';
 import { SurveyInstance } from '@/types';
-import { archiveResponses, loadResponses, saveResponses } from '@/lib/saveUtils';
+import { archiveResponses, saveResponses } from '@/lib/saveUtils';
 
 const INSTANCES_FILE = join(process.cwd(), 'data/instances.json');
 
@@ -140,7 +140,10 @@ export async function PUT(request: NextRequest) {
     // When there is responses data added in the payload
     if (responseData) {
 
-      saveResponses(responseData, instances[index].token);
+      saveResponses(responseData, instances[index].token, {
+        author: getAdminEmail(token) || 'Admin',
+        source: 'import',
+      });
       
       successMessage = successMessage + ", new responses loaded"
     }

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { saveTokenResponse, loadResponses } from '@/lib/saveUtils';
+import { saveTokenResponse } from '@/lib/saveUtils';
 import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
 import { SurveyInstance } from '@/types';
@@ -18,7 +18,7 @@ function findInstance(token: string) {
 
 export async function POST(request: NextRequest) {
   try {
-    const { token, surveyData } = await request.json();
+    const { token, surveyData, author } = await request.json();
     
     // Verify that instance exists
     const instance = findInstance(token);
@@ -27,7 +27,11 @@ export async function POST(request: NextRequest) {
     }
 
     // Save data 
-    saveTokenResponse(token, surveyData);
+    saveTokenResponse(
+      token,
+      surveyData,
+      typeof author === 'string' ? author : undefined
+    );
 
     return NextResponse.json({ 
       message: 'Réponses sauvegardées',

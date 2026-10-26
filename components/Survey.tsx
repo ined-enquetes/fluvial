@@ -234,7 +234,8 @@ export default function SurveyComponent({ token }: SurveyComponentProps) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           token,
-          surveyData // Save all data of the survey
+          surveyData, // Save all data of the survey
+          author: latestRef.current.currentUser || 'Anonyme',
         })
       });
 
