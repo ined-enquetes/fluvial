@@ -7,6 +7,13 @@ export interface SurveyInstance {
   isActive: boolean;
   responseData?: ResponsesData;
   allowedEmails?: string[]; // Optionnel: restreindre l'accès
+  questionnaire?: string; // File name of the questionnaire in data/questionnaires
+}
+
+export interface QuestionnaireInfo {
+  id: string; // File name, e.g. "fr.json"
+  name: string; // Human-readable label, e.g. "Français — Formulaire de métadonnées"
+  language: string; // Language inferred from the file name, e.g. "fr"
 }
 
 export interface ResponsesData {

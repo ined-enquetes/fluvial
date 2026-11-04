@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { existsSync, readFileSync } from 'fs';
 import { join } from 'path';
 import adminsData from '@/data/admins.json';
-import templateData from '@/data/survey-template.json';
 import { loadHistory } from '@/lib/saveUtils';
+import { loadQuestionnaireJson } from '@/lib/questionnaires';
 import { SurveyInstance } from '@/types';
 
 const INSTANCES_FILE = join(process.cwd(), 'data/instances.json');
@@ -60,7 +60,10 @@ export async function GET(
     }
 
     const questionTitles: Record<string, string> = {};
-    collectQuestionTitles(templateData, questionTitles);
+    collectQuestionTitles(
+      loadQuestionnaireJson(instance.questionnaire),
+      questionTitles
+    );
 
     const history = loadHistory(instance.token)
       .sort((a, b) =>

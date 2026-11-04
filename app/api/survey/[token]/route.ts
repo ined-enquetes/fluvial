@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
 import { loadResponses } from '@/lib/saveUtils';
-import templateData from '@/data/survey-template.json';
+import { loadQuestionnaireJson } from '@/lib/questionnaires';
 import { SurveyInstance } from '@/types';
 
 const INSTANCES_FILE = join(process.cwd(), 'data/instances.json');
@@ -38,9 +38,10 @@ export async function GET(
   return NextResponse.json({
     instance: {
       id: instance.id,
-      name: instance.name
+      name: instance.name,
+      questionnaire: instance.questionnaire
     },
-    surveyJson: templateData,
+    surveyJson: loadQuestionnaireJson(instance.questionnaire),
     existingData: existingData
   });
 }

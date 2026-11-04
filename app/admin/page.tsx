@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { HistoryEntry, SurveyInstance } from '@/types';
+import { HistoryEntry, QuestionnaireInfo, SurveyInstance } from '@/types';
 
 function formatHistoryValue(value: unknown): string {
   if (value === null || value === undefined || value === '') return '—';
@@ -27,8 +27,10 @@ function formatHistoryDate(timestamp: string): string {
 
 export default function AdminPage() {
   const [instances, setInstances] = useState<SurveyInstance[]>([]);
+  const [questionnaires, setQuestionnaires] = useState<QuestionnaireInfo[]>([]);
   const [token, setToken] = useState('');
   const [newInstanceName, setNewInstanceName] = useState('');
+  const [newQuestionnaire, setNewQuestionnaire] = useState('');
   const [adminConnect, setAdminConnect] = useState(false);
 
   const [loading, setLoading] = useState(false);
@@ -40,6 +42,7 @@ export default function AdminPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState('');
   const [editActive, setEditActive] = useState(true);
+  const [editQuestionnaire, setEditQuestionnaire] = useState('');
 
   const [deleteTarget, setDeleteTarget] = useState<SurveyInstance | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState('');
@@ -89,8 +92,17 @@ export default function AdminPage() {
 
       if (response.ok) {
         const data = await response.json();
+        const availableQuestionnaires: QuestionnaireInfo[] =
+          data.questionnaires ?? [];
+
         setAdminConnect(true);
         setInstances(data.instances ?? []);
+        setQuestionnaires(availableQuestionnaires);
+        setNewQuestionnaire(current =>
+          availableQuestionnaires.some(item => item.id === current)
+            ? current
+            : availableQuestionnaires[0]?.id ?? ''
+        );
       } else if (response.status === 403) {
         setAdminConnect(false);
         setError('Token admin invalide.');
@@ -119,7 +131,10 @@ export default function AdminPage() {
           ...authHeaders,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name: newInstanceName.trim() }),
+        body: JSON.stringify({
+          name: newInstanceName.trim(),
+          questionnaire: newQuestionnaire || undefined,
+        }),
       });
 
       if (response.ok) {
@@ -137,9 +152,19 @@ export default function AdminPage() {
   };
 
   const startEdit = (instance: SurveyInstance) => {
+    const legacyQuestionnaire = questionnaires.find(
+      item => item.id === 'survey-template.json'
+    );
+
     setEditingId(instance.id);
     setEditName(instance.name);
     setEditActive(instance.isActive);
+    setEditQuestionnaire(
+      instance.questionnaire ??
+        legacyQuestionnaire?.id ??
+        questionnaires[0]?.id ??
+        ''
+    );
     clearMessages();
   };
 
@@ -147,6 +172,7 @@ export default function AdminPage() {
     setEditingId(null);
     setEditName('');
     setEditActive(true);
+    setEditQuestionnaire('');
   };
 
   const saveEdit = async (instanceId: string) => {
@@ -166,6 +192,7 @@ export default function AdminPage() {
           id: instanceId,
           name: editName.trim(),
           isActive: editActive,
+          questionnaire: editQuestionnaire || undefined,
         }),
       });
 
@@ -350,6 +377,18 @@ export default function AdminPage() {
 
   const connected = adminConnect;
 
+  const questionnaireLabel = (id?: string) => {
+    if (id) return questionnaires.find(item => item.id === id)?.name ?? id;
+
+    const legacyQuestionnaire = questionnaires.find(
+      item => item.id === 'survey-template.json'
+    );
+
+    return legacyQuestionnaire
+      ? `${legacyQuestionnaire.name} (par défaut)`
+      : 'Questionnaire par défaut';
+  };
+
   return (
     <main
       className="min-h-screen bg-white text-black"
@@ -408,7 +447,7 @@ export default function AdminPage() {
 
         {connected && (
           <section className="mb-8 rounded-[24px] border border-[#eee] bg-white p-4 shadow-[0_8px_30px_rgba(0,0,0,0.04)] sm:p-5">
-            <div className="grid gap-3 sm:grid-cols-[1fr_auto] sm:items-end">
+            <div className="grid gap-3 lg:grid-cols-[1fr_1fr_auto] lg:items-end">
               <div>
                 <label className="mb-1 block text-sm font-medium text-black/75">
                   Nouvelle instance
@@ -421,9 +460,33 @@ export default function AdminPage() {
                   className="w-full rounded-2xl border border-[#eee] bg-white px-4 py-3 text-sm outline-none transition placeholder:text-black/30 focus:border-[#ff564e]"
                 />
               </div>
+              <div>
+                <label className="mb-1 block text-sm font-medium text-black/75">
+                  Questionnaire
+                </label>
+                <select
+                  value={newQuestionnaire}
+                  onChange={(e) => setNewQuestionnaire(e.target.value)}
+                  disabled={questionnaires.length === 0}
+                  className="w-full rounded-2xl border border-[#eee] bg-white px-4 py-3 text-sm outline-none transition focus:border-[#ff564e] disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {questionnaires.length === 0 && (
+                    <option value="">Aucun questionnaire disponible</option>
+                  )}
+                  {questionnaires.map((questionnaire) => (
+                    <option key={questionnaire.id} value={questionnaire.id}>
+                      {questionnaire.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
               <button
                 onClick={createInstance}
-                disabled={actionLoadingId === 'create' || !newInstanceName.trim()}
+                disabled={
+                  actionLoadingId === 'create' ||
+                  !newInstanceName.trim() ||
+                  !newQuestionnaire
+                }
                 className="inline-flex items-center justify-center rounded-2xl bg-[#ff564e] px-5 py-3 text-sm font-medium text-white transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {actionLoadingId === 'create' ? 'Création…' : 'Créer une instance'}
@@ -469,6 +532,9 @@ export default function AdminPage() {
                           </div>
                           <div className="mt-2 text-sm text-black/55">
                             Token : {instance.token}
+                          </div>
+                          <div className="mt-1 text-sm text-black/55">
+                            Questionnaire : {questionnaireLabel(instance.questionnaire)}
                           </div>
                         </div>
                       </div>
@@ -541,6 +607,27 @@ export default function AdminPage() {
                           onChange={(e) => setEditName(e.target.value)}
                           className="w-full rounded-2xl border border-[#eee] bg-white px-4 py-3 text-sm outline-none transition placeholder:text-black/30 focus:border-[#ff564e]"
                         />
+                      </div>
+
+                      <div>
+                        <label className="mb-1 block text-sm font-medium text-black/75">
+                          Questionnaire
+                        </label>
+                        <select
+                          value={editQuestionnaire}
+                          onChange={(e) => setEditQuestionnaire(e.target.value)}
+                          disabled={questionnaires.length === 0}
+                          className="w-full rounded-2xl border border-[#eee] bg-white px-4 py-3 text-sm outline-none transition focus:border-[#ff564e] disabled:cursor-not-allowed disabled:opacity-60"
+                        >
+                          {questionnaires.length === 0 && (
+                            <option value="">Aucun questionnaire disponible</option>
+                          )}
+                          {questionnaires.map((questionnaire) => (
+                            <option key={questionnaire.id} value={questionnaire.id}>
+                              {questionnaire.name}
+                            </option>
+                          ))}
+                        </select>
                       </div>
 
                       <label className="flex items-center gap-3 text-sm text-black/75">

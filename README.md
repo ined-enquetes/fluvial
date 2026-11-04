@@ -123,6 +123,13 @@ You can access to the adinistration of the website by going to the following URL
 
 Each questionnaire instance has a **Historique des modifications** button. It lists the changes made to the answers: date, author, source (questionnaire or JSON import) and the old → new value of each modified field. The history is stored per questionnaire in `data/responses/[token]/history/`.
 
+### Questionnaires and languages
+Questionnaire forms live in `data/questionnaires/`. Each JSON file is a complete SurveyJS questionnaire and its file name is used as its identifier: `fr.json` is the French form, `en.json` the English one.
+
+When creating or editing an instance, the administrator selects which questionnaire the instance uses. To add a new language or a form with a different set of DDI fields, copy an existing file, edit it, and drop it in `data/questionnaires/`: it is listed automatically in the admin interface.
+
+Existing installations are backwards compatible: instances created before this feature have no questionnaire selection and keep using `data/survey-template.json`. That legacy file is also listed in the admin interface as the **Questionnaire historique**, so it remains selectable even if the `data/questionnaires/` folder is missing from an old data volume.
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## Architecture
@@ -156,18 +163,22 @@ metadata-template/
     │   ├── Survey.tsx                    # SurveyJS component
     │   └── UserHeader.tsx                # Header display for name management
     ├── data/
+    │   ├── questionnaires/               # Selectable SurveyJS questionnaires
+    │   │   ├── fr.json                   # French questionnaire
+    │   │   └── en.json                   # English questionnaire
     │   ├── responses/                    # Responses list
     │   │   ├──[token]/                   # Survey Token
     │   │   │   ├── comments.json         # Comments of survey
     │   │   │   ├── history/              # Change history (one file per editing session)
     │   │   │   └── responses.json        # Responses of Survey
     │   │   └── archives/                 # Deleted questionnaires (whole folder moved here)
-    │   ├── survey-template.json          # Template questionnaire
+    │   ├── survey-template.json          # Legacy fallback questionnaire
     │   ├── instances.json                # Instances
     │   └── admins.json                   # Tokens admin
     ├── lib/
     │   ├── commentService.ts             # Service to handle comments
     │   ├── cookiesUtils.ts               # Service to handle user comment
+    │   ├── questionnaires.ts             # Questionnaire discovery and loading
     │   └── saveUtils.ts                  # Service to handle JSON files writing/reading
     └── types/
         └── index.ts

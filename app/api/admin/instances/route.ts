@@ -5,6 +5,7 @@ import { join } from 'path';
 import adminsData from '@/data/admins.json';
 import { SurveyInstance } from '@/types';
 import { archiveResponses, saveResponses } from '@/lib/saveUtils';
+import { isQuestionnaireId, listQuestionnaires } from '@/lib/questionnaires';
 
 const INSTANCES_FILE = join(process.cwd(), 'data/instances.json');
 
@@ -53,7 +54,8 @@ export async function GET(request: NextRequest) {
   }
 
   const instances = loadInstances();
-  return NextResponse.json({ instances });
+  const questionnaires = listQuestionnaires();
+  return NextResponse.json({ instances, questionnaires });
 }
 
 export async function POST(request: NextRequest) {
@@ -64,8 +66,15 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const { name, allowedEmails } = await request.json();
-    
+    const { name, allowedEmails, questionnaire } = await request.json();
+
+    if (questionnaire !== undefined && !isQuestionnaireId(questionnaire)) {
+      return NextResponse.json(
+        { error: 'Questionnaire introuvable' },
+        { status: 400 }
+      );
+    }
+
     // Load current instances
     const instances = loadInstances();
     
@@ -76,7 +85,9 @@ export async function POST(request: NextRequest) {
       createdAt: new Date().toISOString(),
       createdBy: getAdminEmail(token),
       isActive: true,
-      allowedEmails
+      allowedEmails,
+      questionnaire:
+        questionnaire ?? listQuestionnaires()[0]?.id ?? 'fr.json',
     };
 
     // Add new instance
@@ -107,12 +118,26 @@ export async function PUT(request: NextRequest) {
   }
 
   try {
-    const { id, name, allowedEmails, isActive, responseData } = await request.json();
+    const {
+      id,
+      name,
+      allowedEmails,
+      isActive,
+      responseData,
+      questionnaire,
+    } = await request.json();
     let successMessage = 'Instance mise à jour';
 
     if (!id) {
       return NextResponse.json(
         { error: 'ID de l’instance requis' },
+        { status: 400 }
+      );
+    }
+
+    if (questionnaire !== undefined && !isQuestionnaireId(questionnaire)) {
+      return NextResponse.json(
+        { error: 'Questionnaire introuvable' },
         { status: 400 }
       );
     }
@@ -133,6 +158,7 @@ export async function PUT(request: NextRequest) {
       ...(name !== undefined ? { name } : {}),
       ...(allowedEmails !== undefined ? { allowedEmails } : {}),
       ...(isActive !== undefined ? { isActive } : {}),
+      ...(questionnaire !== undefined ? { questionnaire } : {}),
     };
 
     saveInstances(instances);

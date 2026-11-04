@@ -1,0 +1,841 @@
+{
+  "title": "Formulaire de métadonnées",
+  "pages": [
+    {
+      "name": "page1",
+      "title": "Pour vous aider à compléter les champs, reportez-vous à ce guide :\n",
+      "elements": [
+        {
+          "type": "html",
+          "name": "aide1",
+          "html": "<h4><i><a href=\"http://hdl.handle.net/20.500.12204/AYi60PA8Lg0aT10Rui9w\" target=\"_blank\">\nGuides Mise à Disposition d'Enquête. 1 - Les métadonnées. n°MAD01, Aubervilliers : http://hdl.handle.net/20.500.12204/AYi60PA8Lg0aT10Rui9w ↗</i></a><h4>"
+        }
+      ]
+    },
+    {
+      "name": "id",
+      "title": "Identification",
+      "elements": [
+        {
+          "type": "text",
+          "name": "idno",
+          "title": "Numéro d'identification",
+          "placeholder": "IE0xxx"
+        },
+        {
+          "type": "text",
+          "name": "titl",
+          "title": "Titre",
+          "placeholder": "Titre de l’enquête"
+        },
+        {
+          "type": "paneldynamic",
+          "name": "verStmts",
+          "title": "Version",
+          "templateElements": [
+            {
+              "type": "text",
+              "name": "verStmt.id",
+              "minWidth": "60px",
+              "maxWidth": "25%",
+              "title": "Version number"
+            },
+            {
+              "type": "text",
+              "name": "verStmt.text",
+              "minWidth": "0",
+              "maxWidth": "50%",
+              "startWithNewLine": false,
+              "title": "Version change"
+            },
+            {
+              "type": "text",
+              "name": "verStmt.date",
+              "minWidth": "0",
+              "maxWidth": "25%",
+              "startWithNewLine": false,
+              "title": "Version date",
+              "inputType": "date"
+            }
+          ]
+        },
+        {
+          "type": "tagbox",
+          "name": "ingeref",
+          "title": "Ingénieur.es référent.es",
+          "choices": [
+            "Amandine STEPHAN ",
+            "Aurélie SANTOS",
+            "Efi MARKOU",
+            "Gaspar MASSIOT",
+            "Géraldine CHARRANCE ",
+            "Geraldine VIVIER",
+            "Patricia THAUVIN",
+            "Paul COCHET",
+            "Ruxandra BREDA-POPA"
+          ],
+          "choicesOrder": "random",
+          "placeholder": "Ajouter...",
+          "allowCustomChoices": true
+        },
+        {
+          "type": "text",
+          "name": "website",
+          "title": "Site web de l’enquête",
+          "inputType": "url",
+          "placeholder": "nouvellenquete.site.ined.fr"
+        },
+        {
+          "type": "file",
+          "name": "logoFile",
+          "title": "Logo de l’enquête",
+          "acceptedTypes": "image/*",
+          "filePlaceholder": "Glissez-déposez le logo ici ou cliquez sur le bouton ci-dessous pour sélectionner une image à télécharger."
+        },
+        {
+          "type": "paneldynamic",
+          "name": "rspStmt",
+          "title": "Équipe de production des métadonnées",
+          "description": "A remplir par l'équipe Mise à Disposition",
+          "templateElements": [
+            {
+              "type": "text",
+              "name": "docDscr@AuthEnty",
+              "minWidth": "150px",
+              "maxWidth": "50%",
+              "title": "NOM Prénom"
+            },
+            {
+              "type": "tagbox",
+              "name": "docDscr@AuthEnty@affliliation",
+              "minWidth": "150px",
+              "maxWidth": "50%",
+              "startWithNewLine": false,
+              "title": "Affliliation",
+              "choices": [
+                {
+                  "value": "Service des enquêtes et des sondages, Ined",
+                  "text": "SES, Ined"
+                }
+              ],
+              "allowCustomChoices": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Informations Générales",
+      "title": "Informations Générales",
+      "elements": [
+        {
+          "type": "text",
+          "name": "subTitl",
+          "title": "Sous-titre",
+          "placeholder": "Entrez le sous-titre de l’enquête."
+        },
+        {
+          "type": "text",
+          "name": "altTitl",
+          "title": "Titre alternatif",
+          "placeholder": "EPIC, Virage, MFV, …."
+        },
+        {
+          "type": "text",
+          "name": "parTitl",
+          "title": "Titre traduit",
+          "placeholder": "Entrez le titre de l’enquête dans une autre langue (généralement l’anglais)."
+        },
+        {
+          "type": "text",
+          "name": "IDNo@DOI",
+          "title": "DOI",
+          "description": "A remplir par l'équipe Mise à Disposition",
+          "placeholder": "10.48756/ined-IE0248-3138"
+        },
+        {
+          "type": "text",
+          "name": "url",
+          "title": "Lien sur DataIned",
+          "description": "A remplir par l'équipe Mise à Disposition",
+          "inputType": "url",
+          "placeholder": "https://data.ined.fr/index.php/catalog/xxx"
+        },
+        {
+          "type": "comment",
+          "name": "abstract",
+          "title": "Résumé",
+          "placeholder": "Entrez un résumé décrivant l’enquête, ses objectifs, les thématiques abordées, etc."
+        }
+      ]
+    },
+    {
+      "name": "ÉQUIPE DE RECHERCHE ET REMERCIEMENTS",
+      "title": "ÉQUIPE DE RECHERCHE ET REMERCIEMENTS",
+      "elements": [
+        {
+          "type": "paneldynamic",
+          "name": "rech",
+          "title": "Équipe de recherche (et affiliation)",
+          "templateElements": [
+            {
+              "type": "text",
+              "name": "AuthEnty",
+              "minWidth": "150px",
+              "maxWidth": "50%",
+              "title": "NOM Prénom"
+            },
+            {
+              "type": "tagbox",
+              "name": "AuthEnty@affiliation",
+              "minWidth": "150px",
+              "maxWidth": "50%",
+              "startWithNewLine": false,
+              "title": "Affliliation",
+              "choices": [
+                "Ined"
+              ],
+              "allowCustomChoices": true
+            }
+          ]
+        },
+        {
+          "type": "paneldynamic",
+          "name": "contrib",
+          "title": "Autres contributeurs et remerciements (avec affiliation et rôle)",
+          "templateElements": [
+            {
+              "type": "text",
+              "name": "othId",
+              "minWidth": "150px",
+              "maxWidth": "33%",
+              "title": "NOM Prénom"
+            },
+            {
+              "type": "tagbox",
+              "name": "othId@affiliation",
+              "minWidth": "100px",
+              "maxWidth": "33%",
+              "startWithNewLine": false,
+              "title": "Affliliation",
+              "choices": [
+                "Ined"
+              ],
+              "allowCustomChoices": true
+            },
+            {
+              "type": "comment",
+              "name": "othId@role",
+              "minWidth": "100px",
+              "maxWidth": "33%",
+              "startWithNewLine": false,
+              "title": "Role"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "INSTITUTIONS RESPONSABLES DES DONNEES",
+      "title": "INSTITUTIONS RESPONSABLES DES DONNEES",
+      "elements": [
+        {
+          "type": "paneldynamic",
+          "name": "producerHandler",
+          "title": "Producteur (Nom, Rôle)",
+          "templateElements": [
+            {
+              "type": "comment",
+              "name": "producer",
+              "maxWidth": "33%",
+              "title": "Nom de l’institution"
+            },
+            {
+              "type": "comment",
+              "name": "producer@role",
+              "maxWidth": "33%",
+              "startWithNewLine": false,
+              "title": "Role"
+            }
+          ]
+        },
+        {
+          "type": "paneldynamic",
+          "name": "distrbtr",
+          "title": "Distributeur",
+          "description": "A remplir par l'équipe Mise à Disposition",
+          "templateElements": [
+            {
+              "type": "dropdown",
+              "name": "distrbtr.name",
+              "maxWidth": "33%",
+              "title": "Nom de l’institution",
+              "choices": [
+                "Institut national d'études démographiques"
+              ],
+              "allowCustomChoices": true
+            },
+            {
+              "type": "dropdown",
+              "name": "distrbtr.ID",
+              "startWithNewLine": false,
+              "title": "Abbréviation",
+              "choices": [
+                "INED"
+              ],
+              "allowCustomChoices": true
+            },
+            {
+              "type": "dropdown",
+              "name": "distrbtr.abbr",
+              "maxWidth": "33%",
+              "startWithNewLine": false,
+              "title": "Attribut",
+              "choices": [
+                "Progedo-Ined"
+              ],
+              "allowCustomChoices": true
+            },
+            {
+              "type": "dropdown",
+              "name": "distrbtr.URI",
+              "maxWidth": "33%",
+              "startWithNewLine": false,
+              "title": "URL",
+              "choices": [
+                {
+                  "value": "https://www.ined.fr/",
+                  "text": "ined.fr"
+                }
+              ],
+              "allowCustomChoices": true
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "name": "prodDate",
+          "title": "Date de production",
+          "description": "A remplir par l'équipe Mise à Disposition",
+          "inputType": "date"
+        },
+        {
+          "type": "text",
+          "name": "distDate",
+          "title": "Date de distribution",
+          "description": "A remplir par l'équipe Mise à Disposition",
+          "inputType": "date"
+        },
+        {
+          "type": "paneldynamic",
+          "name": "financer",
+          "title": "Financeurs",
+          "templateElements": [
+            {
+              "type": "comment",
+              "name": "financer@name",
+              "minWidth": "150px",
+              "maxWidth": "33%",
+              "title": "Nom de l’institution"
+            },
+            {
+              "type": "comment",
+              "name": "financer@role",
+              "minWidth": "150px",
+              "maxWidth": "33%",
+              "startWithNewLine": false,
+              "title": "Role"
+            },
+            {
+              "type": "comment",
+              "name": "financer@number",
+              "minWidth": "150px",
+              "maxWidth": "33%",
+              "startWithNewLine": false,
+              "title": "Numéro du financement"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "CHAMP DE L’ENQUÊTE",
+      "title": "CHAMP DE L’ENQUÊTE",
+      "elements": [
+        {
+          "type": "paneldynamic",
+          "name": "keywords",
+          "title": "Mots-clés",
+          "description": "Mots clés disponibles à cette adresse : https://thesauri.cessda.eu/elsst-5/en/?clang=fr",
+          "templateElements": [
+            {
+              "type": "comment",
+              "name": "keyword",
+              "minWidth": "150px",
+              "maxWidth": "50%",
+              "title": "Mot-clé"
+            },
+            {
+              "type": "comment",
+              "name": "keyword@vocabURI",
+              "minWidth": "150px",
+              "maxWidth": "50%",
+              "startWithNewLine": false,
+              "title": "URI"
+            }
+          ]
+        },
+        {
+          "type": "tagbox",
+          "name": "topcClas@Ined",
+          "title": "Thèmes INED",
+          "choices": [
+            "1. Couple, famille, sexualité",
+            "2. Naissance, Fécondité, Contraception",
+            "3. Espérance de vie, Mortalité, Santé",
+            "4. Migrations internationales, Discrimination, Intégration",
+            "5. Habitat, Environnement, Territoire",
+            "6. Genre, Inégalités hommes-femmes",
+            "7. Âge de la vie, Vieillissement",
+            "8. Populations du monde"
+          ],
+          "allowCustomChoices": true
+        },
+        {
+          "type": "tagbox",
+          "name": "topcClas@Cessda",
+          "title": "Thèmes CESSDA",
+          "choices": [
+            "1. Couple, famille, sexualité",
+            "2."
+          ],
+          "choicesByUrl": {
+            "url": "https://vocabularies.cessda.eu/v2/codes/TopicClassification/4.2.2/fr/",
+            "valueName": "notation",
+            "titleName": "title"
+          },
+          "allowCustomChoices": true
+        },
+        {
+          "type": "tagbox",
+          "name": "nation",
+          "title": "Pays",
+          "choicesByUrl": {
+            "url": "https://vocabularies.cessda.eu/v2/codes/CountryNamesAndCodes/1.0.0/en/",
+            "valueName": "title",
+            "titleName": "title"
+          },
+          "allowCustomChoices": true
+        },
+        {
+          "type": "comment",
+          "name": "geogCover",
+          "title": "Couverture géographique"
+        },
+        {
+          "type": "tagbox",
+          "name": "analyUnit",
+          "title": "Unité d'analyse",
+          "choices": [
+            "Item 1",
+            "Item 2",
+            "Item 3"
+          ],
+          "choicesByUrl": {
+            "url": "https://vocabularies.cessda.eu/v2/codes/AnalysisUnit/2.0.2/fr/",
+            "titleName": "title"
+          },
+          "placeholder": "Choisissez un élément."
+        },
+        {
+          "type": "comment",
+          "name": "universe",
+          "title": "Univers (Champs)"
+        },
+        {
+          "type": "text",
+          "name": "dataKind",
+          "title": "Type de données"
+        },
+        {
+          "type": "paneldynamic",
+          "name": "timePrd",
+          "title": "Période(s) couverte(s) par les données",
+          "templateElements": [
+            {
+              "type": "text",
+              "name": "timePrd@start",
+              "minWidth": "150px",
+              "maxWidth": "50%",
+              "title": "Début",
+              "inputType": "date"
+            },
+            {
+              "type": "text",
+              "name": "timePrd@end",
+              "minWidth": "150px",
+              "maxWidth": "50%",
+              "startWithNewLine": false,
+              "title": "Fin",
+              "inputType": "date"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "INFORMATIONS SUR LA COLLECTE",
+      "title": "INFORMATIONS SUR LA COLLECTE",
+      "elements": [
+        {
+          "type": "paneldynamic",
+          "name": "collDate",
+          "title": "Dates de collecte",
+          "templateElements": [
+            {
+              "type": "text",
+              "name": "collDate@start",
+              "minWidth": "150px",
+              "maxWidth": "50%",
+              "title": "Début",
+              "inputType": "date"
+            },
+            {
+              "type": "text",
+              "name": "collDate@end",
+              "minWidth": "150px",
+              "maxWidth": "50%",
+              "startWithNewLine": false,
+              "title": "Fin",
+              "inputType": "date"
+            },
+            {
+              "type": "comment",
+              "name": "collDate@cycle",
+              "minWidth": "150px",
+              "maxWidth": "50%",
+              "startWithNewLine": false,
+              "title": "Étape"
+            }
+          ]
+        },
+        {
+          "type": "paneldynamic",
+          "name": "dataCollectors",
+          "title": "Entité(s) responsable(s) de la collecte des données",
+          "templateElements": [
+            {
+              "type": "comment",
+              "name": "dataCollector",
+              "minWidth": "150px",
+              "maxWidth": "50%",
+              "title": "Nom de l’institution"
+            },
+            {
+              "type": "text",
+              "name": "dataCollector@abbr",
+              "minWidth": "150px",
+              "maxWidth": "50%",
+              "startWithNewLine": false,
+              "title": "Sigle"
+            }
+          ]
+        },
+        {
+          "type": "tagbox",
+          "name": "collModeCV",
+          "title": "Mode de collecte des données",
+          "choices": [
+            "Item 1",
+            "Item 2",
+            "Item 3"
+          ],
+          "choicesByUrl": {
+            "url": "https://vocabularies.cessda.eu/v2/codes/ModeOfCollection/5.0.0/fr/",
+            "titleName": "title"
+          }
+        },
+        {
+          "type": "comment",
+          "name": "collMode",
+          "title": "Mode de collecte des données - Détail"
+        },
+        {
+          "type": "tagbox",
+          "name": "resInstruCV",
+          "title": "Instrument de collecte",
+          "choices": [
+            "Item 1",
+            "Item 2",
+            "Item 3"
+          ],
+          "choicesByUrl": {
+            "url": "https://vocabularies.cessda.eu/v2/codes/TypeOfInstrument/1.1.2/fr/",
+            "titleName": "title"
+          }
+        },
+        {
+          "type": "comment",
+          "name": "resInstru",
+          "title": "Instrument de collecte  - Détail"
+        },
+        {
+          "type": "comment",
+          "name": "collSitu",
+          "title": "Informations notables sur la collecte"
+        },
+        {
+          "type": "comment",
+          "name": "frequenc",
+          "title": "Fréquence de collecte"
+        }
+      ]
+    },
+    {
+      "name": "INFORMATIONS GENERALES SUR L’ENQUETE",
+      "title": "INFORMATIONS GENERALES SUR L’ENQUETE\n",
+      "elements": [
+        {
+          "type": "tagbox",
+          "name": "timeMeth",
+          "title": "Méthode temporelle",
+          "description": "A remplir par l'équipe Mise à Disposition",
+          "choices": [
+            "Item 4"
+          ],
+          "choicesByUrl": {
+            "url": "https://vocabularies.cessda.eu/v2/codes/TimeMethod/1.2.3/fr/",
+            "titleName": "title"
+          },
+          "placeholder": "Choisissez le(s) vocabulaire(s) contrôlé(s)."
+        },
+        {
+          "type": "tagbox",
+          "name": "sampProcVC",
+          "title": "Procédure d’échantillonnage (Vocabulaire controlé)",
+          "choices": [
+            "Item 4"
+          ],
+          "choicesByUrl": {
+            "url": "https://vocabularies.cessda.eu/v2/codes/SamplingProcedure/2.0.0/fr/",
+            "titleName": "title"
+          },
+          "placeholder": "Choisissez le(s) vocabulaire(s) contrôlé(s)."
+        },
+        {
+          "type": "comment",
+          "name": "sampProc",
+          "title": "Procédure d'échantillonnage : détail",
+          "placeholder": "Entrez ici des précisions sur la procédure d’échantillonnage."
+        },
+        {
+          "type": "comment",
+          "name": "respRate",
+          "title": "Taux de réponse",
+          "placeholder": "Entrez ici les informations sur le taux de réponse."
+        },
+        {
+          "type": "comment",
+          "name": "weight",
+          "title": "Pondérations",
+          "placeholder": "Entrez ici des précisions sur les pondérations."
+        },
+        {
+          "type": "comment",
+          "name": "cleanOps",
+          "title": "Apurement",
+          "placeholder": "Entrez ici des précisions sur l’apurement."
+        },
+        {
+          "type": "comment",
+          "name": "dataAppr",
+          "title": "Évaluation de la qualité des données",
+          "placeholder": "Entrez ici des précisions sur la qualité des données."
+        }
+      ]
+    },
+    {
+      "name": "MODALITES D’ACCES AUX DONNEES",
+      "title": "MODALITES D’ACCES AUX DONNEES",
+      "elements": [
+        {
+          "type": "boolean",
+          "name": "madProgedo",
+          "title": "Mise à disposition d’un FPR (Fichier de Production et de Recherche) via Quetelet Progedo",
+          "description": "A remplir par l'équipe Mise à Disposition",
+          "labelTrue": "Oui",
+          "labelFalse": "Non",
+          "swapOrder": true
+        }
+      ]
+    },
+    {
+      "name": "CITATION BIBLIOGRAPHIQUE",
+      "title": "CITATION BIBLIOGRAPHIQUE",
+      "elements": [
+        {
+          "type": "comment",
+          "name": "citLONG",
+          "title": "Citation longue"
+        },
+        {
+          "type": "comment",
+          "name": "citCOURT",
+          "title": "Citation courte"
+        }
+      ]
+    },
+    {
+      "name": "RESSOURCES ASSOCIÉES A L’ENQUÊTE",
+      "title": "RESSOURCES ASSOCIÉES A L’ENQUÊTE",
+      "elements": [
+        {
+          "type": "paneldynamic",
+          "name": "relStdies",
+          "title": "Études reliées",
+          "templateElements": [
+            {
+              "type": "comment",
+              "name": "relStdy",
+              "maxWidth": "50%",
+              "title": "Numéro et titre de l’enquête reliée\n",
+              "placeholder": "IE00XX - La famille et l'orientation scolaire au niveau de la 6ème (1963)"
+            },
+            {
+              "type": "comment",
+              "name": "relStdy@URI",
+              "maxWidth": "33%",
+              "startWithNewLine": false,
+              "title": "DOI (si pas de DOI, URL DataIned)",
+              "placeholder": "https://data.ined.fr/index.php/catalog/xxx"
+            }
+          ]
+        },
+        {
+          "type": "paneldynamic",
+          "name": "relMats",
+          "title": "Ressources associées",
+          "templateElements": [
+            {
+              "type": "comment",
+              "name": "relMat",
+              "minWidth": "100px",
+              "maxWidth": "33%",
+              "title": "Nom du document",
+              "placeholder": "Nom du document à afficher dans DataIned"
+            },
+            {
+              "type": "comment",
+              "name": "relMat@description",
+              "minWidth": "100px",
+              "maxWidth": "33%",
+              "startWithNewLine": false,
+              "title": "Description",
+              "placeholder": "Si besoin, la description de la ressource."
+            },
+            {
+              "type": "comment",
+              "name": "relMat@url",
+              "minWidth": "100px",
+              "maxWidth": "33%",
+              "startWithNewLine": false,
+              "title": "URL DataIned",
+              "placeholder": "https://data.ined.fr/index.php/catalog/xx/download/xxxx"
+            }
+          ]
+        },
+        {
+          "type": "comment",
+          "name": "relCit@arch",
+          "title": "Liens vers la bibliographie Archined",
+          "placeholder": "Lien Archined vers la bibliographie de l’enquête."
+        },
+        {
+          "type": "comment",
+          "name": "relCit@ged",
+          "title": "Liens vers la bibliographie Zotero",
+          "placeholder": "Lien Zotero (GED) vers la bibliographie de l’enquête."
+        }
+      ]
+    },
+    {
+      "name": "FICHIERS DE DONNÉES",
+      "title": "FICHIERS DE DONNÉES",
+      "elements": [
+        {
+          "type": "paneldynamic",
+          "name": "fileDscrs",
+          "title": "Fichier",
+          "templateElements": [
+            {
+              "type": "text",
+              "name": "fileName",
+              "title": "Nom du fichier",
+              "placeholder": "***_fpr"
+            },
+            {
+              "type": "comment",
+              "name": "fileCont",
+              "title": "Contenu du fichier"
+            },
+            {
+              "type": "text",
+              "name": "caseQnty",
+              "title": "Nombre d'observations",
+              "inputType": "number",
+              "min": 0
+            },
+            {
+              "type": "text",
+              "name": "varQnty",
+              "title": "Nombre de variables",
+              "inputType": "number",
+              "min": 0,
+              "step": 1
+            },
+            {
+              "type": "tagbox",
+              "name": "fileType",
+              "title": "Type du fichier",
+              "placeholder": "Fichier SAS, export CSV, RDATA, ...",
+              "allowCustomChoices": true
+            },
+            {
+              "type": "paneldynamic",
+              "name": "file.verStmts",
+              "title": "Version",
+              "templateElements": [
+                {
+                  "type": "text",
+                  "name": "file.verStmt.id",
+                  "minWidth": "60px",
+                  "maxWidth": "25%",
+                  "title": "Version number"
+                },
+                {
+                  "type": "text",
+                  "name": "file.verStmt.txt",
+                  "minWidth": "0",
+                  "maxWidth": "50%",
+                  "startWithNewLine": false,
+                  "title": "Version change"
+                },
+                {
+                  "type": "text",
+                  "name": "file.verStmt.date",
+                  "minWidth": "0",
+                  "maxWidth": "25%",
+                  "startWithNewLine": false,
+                  "title": "Version date",
+                  "inputType": "date"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "questionsOnPageMode": "singlePage",
+  "headerView": "advanced"
+}
