@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
+import type { DdiVersion } from '@/lib/ddi';
 import { HistoryEntry, QuestionnaireInfo, SurveyInstance } from '@/types';
 
 function formatHistoryValue(value: unknown): string {
@@ -25,6 +26,87 @@ function formatHistoryDate(timestamp: string): string {
   });
 }
 
+const DDI_DOCS: Record<
+  DdiVersion,
+  {
+    label: string;
+    spec: string;
+    fields: string;
+    schema: string;
+    elements: string;
+  }
+> = {
+  '2.6': {
+    label: 'DDI Codebook 2.6',
+    spec: 'https://ddialliance.org/ddi-codebook_v2.6',
+    fields: 'https://docs.ddialliance.org/DDI-Codebook/2.6/xmlschema/index.html',
+    schema:
+      'https://ddialliance.org/Specification/DDI-Codebook/2.6/XMLSchema/codebook.xsd',
+    elements:
+      'https://docs.ddialliance.org/DDI-Codebook/2.6/xmlschema/schemas/codebook_xsd/elements',
+  },
+  '2.5': {
+    label: 'DDI Codebook 2.5',
+    spec: 'https://ddialliance.org/Specification/DDI-Codebook/2.5/',
+    fields: 'https://docs.ddialliance.org/DDI-Codebook/2.5/xmlschema/index.html',
+    schema:
+      'https://ddialliance.org/Specification/DDI-Codebook/2.5/XMLSchema/codebook.xsd',
+    elements:
+      'https://docs.ddialliance.org/DDI-Codebook/2.5/xmlschema/schemas/codebook_xsd/elements',
+  },
+  '2.1': {
+    label: 'DDI Codebook 2.1',
+    spec: 'https://ddialliance.org/ddi-codebook_v2.1',
+    fields: 'https://docs.ddialliance.org/DDI-Codebook/2.5/xmlschema/index.html',
+    schema:
+      'https://ddialliance.org/Specification/DDI-Codebook/2.1/XMLSchema/Version2-1.xsd',
+    elements:
+      'https://docs.ddialliance.org/DDI-Codebook/2.5/xmlschema/schemas/codebook_xsd/elements',
+  },
+};
+
+const DDI_ELEMENT_NAMES = [
+  'codeBook',
+  'docDscr',
+  'stdyDscr',
+  'citation',
+  'titlStmt',
+  'IDNo',
+  'stdyInfo',
+  'subject',
+  'keyword',
+  'topcClas',
+  'abstract',
+  'sumDscr',
+  'timePrd',
+  'collDate',
+  'nation',
+  'geogCover',
+  'anlyUnit',
+  'universe',
+  'dataKind',
+  'method',
+  'dataColl',
+  'dataCollector',
+  'sampProc',
+  'collMode',
+  'resInstru',
+  'anlyInfo',
+  'respRate',
+  'dataAppr',
+  'dataAccs',
+  'setAvail',
+  'othrStdyMat',
+  'relMat',
+  'relStdy',
+  'othRefs',
+  'fileDscr',
+  'fileTxt',
+  'fileName',
+  'fileType',
+  'verStmt',
+];
+
 export default function AdminPage() {
   const [instances, setInstances] = useState<SurveyInstance[]>([]);
   const [questionnaires, setQuestionnaires] = useState<QuestionnaireInfo[]>([]);
@@ -32,6 +114,7 @@ export default function AdminPage() {
   const [newInstanceName, setNewInstanceName] = useState('');
   const [newQuestionnaire, setNewQuestionnaire] = useState('');
   const [adminConnect, setAdminConnect] = useState(false);
+  const [ddiVersion, setDdiVersion] = useState<DdiVersion>('2.6');
 
   const [loading, setLoading] = useState(false);
   const [actionLoadingId, setActionLoadingId] = useState<string | null>(null);
@@ -55,6 +138,18 @@ export default function AdminPage() {
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [importTarget, setImportTarget] = useState<SurveyInstance | null>(null);
+
+  const ddiFileInputRef = useRef<HTMLInputElement | null>(null);
+  const [ddiImportTarget, setDdiImportTarget] = useState<SurveyInstance | null>(
+    null
+  );
+  const [ddiImportResult, setDdiImportResult] = useState<{
+    instanceName: string;
+    message: string;
+    version: string;
+    fields: number;
+    warnings: string[];
+  } | null>(null);
 
   const authHeaders = useMemo(
     () => ({
@@ -293,9 +388,106 @@ export default function AdminPage() {
     }
   };
 
-  const handleImportDDI = (instance: SurveyInstance) => {
-    setNotice(`Import DDI à venir pour « ${instance.name} ».`);
-    setError('');
+  const exportDDI = async (instanceId: string, instanceName: string) => {
+    clearMessages();
+    setActionLoadingId(`ddi:${instanceId}`);
+
+    try {
+      const response = await fetch(
+        `/api/survey/${instanceId}/export/ddi?version=${encodeURIComponent(
+          ddiVersion
+        )}`,
+        { headers: authHeaders }
+      );
+
+      if (response.ok) {
+        const blob = await response.blob();
+        const disposition = response.headers.get('content-disposition') ?? '';
+        const fileNameMatch = /filename="([^"]+)"/.exec(disposition);
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download =
+          fileNameMatch?.[1] ?? `${instanceName}-ddi-${ddiVersion}.xml`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+        setNotice(`Export DDI ${ddiVersion} téléchargé.`);
+      } else {
+        const payload = await response.json().catch(() => null);
+        setError(payload?.error ?? "Erreur lors de l'export DDI.");
+      }
+    } catch {
+      setError("Erreur réseau lors de l'export DDI.");
+    } finally {
+      setActionLoadingId(null);
+    }
+  };
+
+  const openDdiImportPicker = (instance: SurveyInstance) => {
+    setDdiImportTarget(instance);
+    ddiFileInputRef.current?.click();
+  };
+
+  const handleDdiImportFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    const instance = ddiImportTarget;
+
+    // allow re-selecting same file later
+    event.target.value = '';
+
+    if (!file || !instance) return;
+
+    const confirmed = window.confirm(
+      `Importer « ${file.name} » dans l’instance « ${instance.name} » ?\n\n` +
+        'Toutes les métadonnées existantes seront remplacées par le contenu du fichier DDI. ' +
+        'Le logo de l’enquête sera conservé.'
+    );
+
+    if (!confirmed) {
+      setDdiImportTarget(null);
+      return;
+    }
+
+    clearMessages();
+    setActionLoadingId(`ddi-import:${instance.id}`);
+
+    try {
+      const xml = await file.text();
+
+      const response = await fetch(`/api/survey/${instance.id}/import/ddi`, {
+        method: 'POST',
+        headers: {
+          ...authHeaders,
+          'Content-Type': 'application/xml',
+        },
+        body: xml,
+      });
+
+      const payload = await response.json().catch(() => null);
+
+      if (response.ok) {
+        setDdiImportResult({
+          instanceName: instance.name,
+          message: payload?.message ?? 'Métadonnées DDI importées.',
+          version: payload?.version ?? '',
+          fields: Number(payload?.fields ?? 0),
+          warnings: Array.isArray(payload?.warnings) ? payload.warnings : [],
+        });
+
+        await loadInstances();
+      } else {
+        setError(payload?.error ?? "Erreur lors de l'import DDI.");
+      }
+    } catch {
+      setError("Erreur réseau lors de l'import DDI.");
+    } finally {
+      setDdiImportTarget(null);
+      setActionLoadingId(null);
+    }
   };
 
   const openDeleteModal = (instance: SurveyInstance) => {
@@ -495,6 +687,95 @@ export default function AdminPage() {
           </section>
         )}
 
+        {connected && (
+          <section className="mb-8 rounded-[24px] border border-[#eee] bg-white p-4 shadow-[0_8px_30px_rgba(0,0,0,0.04)] sm:p-5">
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+              <div>
+                <h2 className="text-lg font-semibold tracking-tight">
+                  Export DDI Codebook
+                </h2>
+                <p className="mt-1 max-w-2xl text-sm leading-6 text-black/60">
+                  Le fichier XML est généré à la demande depuis les métadonnées
+                  de l’instance, sans modifier les données JSON existantes.
+                </p>
+              </div>
+
+              <div className="lg:w-64">
+                <label className="mb-1 block text-sm font-medium text-black/75">
+                  Version DDI
+                </label>
+                <select
+                  value={ddiVersion}
+                  onChange={(e) => setDdiVersion(e.target.value as DdiVersion)}
+                  className="w-full rounded-2xl border border-[#eee] bg-white px-4 py-3 text-sm outline-none transition focus:border-[#ff564e]"
+                >
+                  <option value="2.6">DDI Codebook 2.6</option>
+                  <option value="2.5">DDI Codebook 2.5</option>
+                  <option value="2.1">DDI Codebook 2.1</option>
+                </select>
+                {ddiVersion === '2.1' && (
+                  <p className="mt-2 text-xs leading-5 text-black/50">
+                    DDI 2.1 ne conserve qu’une seule description de fichier
+                    (nom, type et version).
+                  </p>
+                )}
+              </div>
+            </div>
+
+            <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm">
+              <a
+                href={DDI_DOCS[ddiVersion].spec}
+                target="_blank"
+                rel="noreferrer"
+                className="font-medium text-black underline decoration-[#ff564e]/40 underline-offset-4 transition hover:text-[#ff564e]"
+              >
+                Spécification {DDI_DOCS[ddiVersion].label} ↗
+              </a>
+              <a
+                href={DDI_DOCS[ddiVersion].fields}
+                target="_blank"
+                rel="noreferrer"
+                className="font-medium text-black underline decoration-[#ff564e]/40 underline-offset-4 transition hover:text-[#ff564e]"
+              >
+                Documentation des éléments ↗
+              </a>
+              <a
+                href={DDI_DOCS[ddiVersion].schema}
+                target="_blank"
+                rel="noreferrer"
+                className="font-medium text-black underline decoration-[#ff564e]/40 underline-offset-4 transition hover:text-[#ff564e]"
+              >
+                Schéma XSD ↗
+              </a>
+            </div>
+
+            <details className="mt-4 rounded-2xl border border-[#eee] bg-[#fafafa] px-4 py-3">
+              <summary className="cursor-pointer text-sm font-medium text-black/75">
+                Éléments DDI utilisés (documentation officielle)
+              </summary>
+              <p className="mt-2 text-xs leading-5 text-black/50">
+                Chaque lien ouvre la fiche officielle de l’élément correspondant.
+                {ddiVersion === '2.1'
+                  ? ' La documentation de terrain DDI 2.5 est utilisée comme référence, car DDI 2.1 est rétrocompatible.'
+                  : ''}
+              </p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {DDI_ELEMENT_NAMES.map((name) => (
+                  <a
+                    key={name}
+                    href={`${DDI_DOCS[ddiVersion].elements}/${name}.html`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="rounded-full border border-[#eee] bg-white px-3 py-1 font-mono text-[11px] text-black/70 transition hover:border-[#ff564e] hover:text-[#ff564e]"
+                  >
+                    {name}
+                  </a>
+                ))}
+              </div>
+            </details>
+          </section>
+        )}
+
         {connected && instances.length === 0 && (
           <section className="rounded-[24px] border border-dashed border-[#eee] bg-white px-6 py-10 text-center text-sm text-black/55">
             Aucune instance pour le moment.
@@ -574,10 +855,25 @@ export default function AdminPage() {
                         </button>
 
                         <button
-                          onClick={() => handleImportDDI(instance)}
-                          className="inline-flex items-center justify-center rounded-2xl border border-[#eee] bg-white px-4 py-3 text-sm font-medium text-black transition hover:border-[#ff564e] hover:text-[#ff564e] hover:cursor-pointer"
+                          onClick={() => exportDDI(instance.id, instance.name)}
+                          disabled={actionLoadingId === `ddi:${instance.id}`}
+                          className="inline-flex items-center justify-center rounded-2xl border border-[#eee] bg-white px-4 py-3 text-sm font-medium text-black transition hover:border-[#ff564e] hover:text-[#ff564e] disabled:cursor-not-allowed disabled:opacity-50 hover:cursor-pointer"
                         >
-                          Importer un DDI
+                          {actionLoadingId === `ddi:${instance.id}`
+                            ? 'Génération…'
+                            : `Télécharger DDI ${ddiVersion} ▾`}
+                        </button>
+
+                        <button
+                          onClick={() => openDdiImportPicker(instance)}
+                          disabled={
+                            actionLoadingId === `ddi-import:${instance.id}`
+                          }
+                          className="inline-flex items-center justify-center rounded-2xl border border-[#eee] bg-white px-4 py-3 text-sm font-medium text-black transition hover:border-[#ff564e] hover:text-[#ff564e] disabled:cursor-not-allowed disabled:opacity-50 hover:cursor-pointer"
+                        >
+                          {actionLoadingId === `ddi-import:${instance.id}`
+                            ? 'Import DDI…'
+                            : 'Importer un DDI'}
                         </button>
 
                         <button
@@ -661,6 +957,51 @@ export default function AdminPage() {
               );
             })}
           </section>
+        )}
+
+        {ddiImportResult && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+            <div className="max-h-[85vh] w-full max-w-lg overflow-y-auto rounded-[28px] bg-white p-6 shadow-2xl">
+              <h2 className="text-2xl font-semibold tracking-tight text-black">
+                Import DDI terminé
+              </h2>
+              <p className="mt-2 text-sm leading-6 text-black/60">
+                {ddiImportResult.message} L’instance{' '}
+                <span className="font-medium text-black">
+                  {ddiImportResult.instanceName}
+                </span>{' '}
+                contient désormais {ddiImportResult.fields} champs.
+              </p>
+
+              {ddiImportResult.version && (
+                <div className="mt-4 rounded-2xl border border-[#eee] bg-[#eee] px-4 py-3 text-sm text-black/70">
+                  Version DDI détectée : {ddiImportResult.version}
+                </div>
+              )}
+
+              {ddiImportResult.warnings.length > 0 && (
+                <div className="mt-4 rounded-2xl border border-[#ff564e]/20 bg-[#ff564e]/5 px-4 py-3">
+                  <div className="text-sm font-medium text-[#ff564e]">
+                    {ddiImportResult.warnings.length} avertissement(s)
+                  </div>
+                  <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-black/70">
+                    {ddiImportResult.warnings.map((warning, index) => (
+                      <li key={index}>{warning}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              <div className="mt-5 flex justify-end">
+                <button
+                  onClick={() => setDdiImportResult(null)}
+                  className="rounded-2xl bg-black px-4 py-3 text-sm font-medium text-white transition hover:bg-black/85"
+                >
+                  Fermer
+                </button>
+              </div>
+            </div>
+          </div>
         )}
 
         {deleteTarget && (
@@ -839,6 +1180,13 @@ export default function AdminPage() {
         accept=".json,application/json"
         className="hidden"
         onChange={handleImportFileChange}
+      />
+      <input
+        ref={ddiFileInputRef}
+        type="file"
+        accept=".xml,application/xml,text/xml"
+        className="hidden"
+        onChange={handleDdiImportFileChange}
       />
     </main>
   );

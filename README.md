@@ -130,6 +130,12 @@ When creating or editing an instance, the administrator selects which questionna
 
 Existing installations are backwards compatible: instances created before this feature have no questionnaire selection and keep using `data/survey-template.json`. That legacy file is also listed in the admin interface as the **Questionnaire historique**, so it remains selectable even if the `data/questionnaires/` folder is missing from an old data volume.
 
+The admin interface can generate a DDI Codebook export (2.6, 2.5 or 2.1) on demand from the stored JSON metadata. The JSON storage format is left unchanged; the XML is produced when the download is requested.
+
+Each instance also has an **Importer un DDI** button. Importing a DDI Codebook 2.6, 2.5 or 2.1 file replaces the instance metadata with the values found in the XML. Some FLUVIAL-specific information cannot be represented in DDI (for example numeric controlled-vocabulary codes or application-only fields), so import is best-effort. The instance logo file is preserved because it is an application asset rather than study metadata.
+
+For the full DDI workflow, the field registry and validation steps, see [`docs/DDI.md`](docs/DDI.md) (English) or [`docs/DDI.fr.md`](docs/DDI.fr.md) (français).
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## Architecture
@@ -149,7 +155,12 @@ metadata-template/
     │   │       │   │   ├──[commentId]/   
     │   │       │   │   │   └── route.ts  # Comment suppression
     │   │       │   │   └── route.ts      # Comment creation and read
+    │   │       │   ├── import/
+    │   │       │   │   └── ddi/
+    │   │       │   │       └── route.ts  # Import DDI Codebook (2.6 / 2.5 / 2.1)
     │   │       │   ├── export/
+    │   │       │   │   ├── ddi/
+    │   │       │   │   │   └── route.ts  # Export DDI Codebook (2.6 / 2.5 / 2.1)
     │   │       │   │   └── route.ts      # Export JSON
     │   │       │   └── route.ts
     │   │       └── save/                 # Reponses save
@@ -179,6 +190,10 @@ metadata-template/
     │   ├── commentService.ts             # Service to handle comments
     │   ├── cookiesUtils.ts               # Service to handle user comment
     │   ├── questionnaires.ts             # Questionnaire discovery and loading
+    │   ├── ddi.ts                        # DDI Codebook XML generator (2.6 / 2.5 / 2.1)
+    │   ├── ddiImport.ts                  # DDI Codebook XML importer (2.6 / 2.5 / 2.1)
+    │   ├── ddiMapping.ts                 # Declarative mapping registry (export + import)
+    │   ├── ddiXml.ts                     # Shared DDI XML primitive helpers
     │   └── saveUtils.ts                  # Service to handle JSON files writing/reading
     └── types/
         └── index.ts
