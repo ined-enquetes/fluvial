@@ -426,6 +426,13 @@ for Codebook versions.
 6. Check that a malformed file still returns HTTP 400 and that unauthenticated
    requests return HTTP 403.
 
+These checks are automated. The `DDI validation` workflow
+(`.github/workflows/ddi-validation.yml`) generates the five exports for each
+fixture in `tests/ddi/fixtures/`, then validates them against the official
+schemas vendored in `tests/ddi/schemas/` — `xmllint` for Codebook 2.6, 2.5,
+2.1 and Lifecycle 3.3, `ajv-cli` for the Lifecycle 4.0 JSON.
+`tests/ddi/README.md` gives the local commands.
+
 ## API reference
 
 ### Export

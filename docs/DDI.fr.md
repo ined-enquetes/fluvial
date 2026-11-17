@@ -446,6 +446,13 @@ pastilles de documentation par élément pour les versions Codebook.
 6. Vérifier qu'un fichier mal formé renvoie toujours HTTP 400 et que les
    requêtes non authentifiées renvoient HTTP 403.
 
+Ces contrôles sont automatisés. Le workflow `DDI validation`
+(`.github/workflows/ddi-validation.yml`) génère les cinq exports de chaque
+jeu de données de `tests/ddi/fixtures/`, puis les valide par rapport aux
+schémas officiels conservés dans `tests/ddi/schemas/` — `xmllint` pour
+Codebook 2.6, 2.5, 2.1 et Lifecycle 3.3, `ajv-cli` pour le JSON Lifecycle
+4.0. `tests/ddi/README.md` donne les commandes locales.
+
 ## Référence de l'API
 
 ### Export

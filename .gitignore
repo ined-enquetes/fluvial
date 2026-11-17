@@ -46,3 +46,6 @@ next-env.d.ts
 /data/responses/*
 !/data/responses/.gitkeep
 /data/instances.json
+
+# generated DDI validation exports
+/tests/ddi/output/

@@ -1,0 +1,99 @@
+name: DDI validation
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'lib/ddi*.ts'
+      - 'data/ddi-lifecycle-mapping.json'
+      - 'tests/ddi/**'
+      - 'scripts/ddi-fixtures.ts'
+      - 'app/api/survey/[token]/export/ddi/route.ts'
+      - '.github/workflows/ddi-validation.yml'
+      - 'package.json'
+      - 'package-lock.json'
+  pull_request:
+    paths:
+      - 'lib/ddi*.ts'
+      - 'data/ddi-lifecycle-mapping.json'
+      - 'tests/ddi/**'
+      - 'scripts/ddi-fixtures.ts'
+      - 'app/api/survey/[token]/export/ddi/route.ts'
+      - '.github/workflows/ddi-validation.yml'
+      - 'package.json'
+      - 'package-lock.json'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ddi-validation-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate DDI exports against official schemas
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install xmllint
+        run: sudo apt-get update && sudo apt-get install -y libxml2-utils
+
+      - name: Generate DDI exports from fixtures
+        run: npx --yes tsx@4.23.15 scripts/ddi-fixtures.ts "$RUNNER_TEMP/ddi"
+
+      - name: Validate DDI Codebook 2.6 XML
+        run: |
+          set -euo pipefail
+          for doc in "$RUNNER_TEMP"/ddi/*-codebook-2.6.xml; do
+            xmllint --nonet --noout \
+              --schema tests/ddi/schemas/codebook-2.6/codebook.xsd "$doc"
+          done
+
+      - name: Validate DDI Codebook 2.5 XML
+        run: |
+          set -euo pipefail
+          for doc in "$RUNNER_TEMP"/ddi/*-codebook-2.5.xml; do
+            xmllint --nonet --noout \
+              --schema tests/ddi/schemas/codebook-2.5/codebook.xsd "$doc"
+          done
+
+      - name: Validate DDI Codebook 2.1 XML
+        run: |
+          set -euo pipefail
+          for doc in "$RUNNER_TEMP"/ddi/*-codebook-2.1.xml; do
+            xmllint --nonet --noout \
+              --schema tests/ddi/schemas/codebook-2.1/Version2-1.xsd "$doc"
+          done
+
+      - name: Validate DDI Lifecycle 3.3 XML
+        run: |
+          set -euo pipefail
+          for doc in "$RUNNER_TEMP"/ddi/*-lifecycle-3.3.xml; do
+            xmllint --nonet --noout \
+              --schema tests/ddi/schemas/lifecycle-3.3/instance.xsd "$doc"
+          done
+
+      - name: Validate DDI Lifecycle 4.0 JSON
+        run: |
+          set -euo pipefail
+          for doc in "$RUNNER_TEMP"/ddi/*-lifecycle-4.0.json; do
+            npx --yes -p ajv-cli@5.0.0 -p ajv-formats ajv validate \
+              --spec=draft2020 --strict=false -c ajv-formats \
+              -s tests/ddi/schemas/lifecycle-4.0/lifecycle40.schema.json \
+              -d "$doc"
+          done

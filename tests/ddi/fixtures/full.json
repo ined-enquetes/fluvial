@@ -1,0 +1,155 @@
+{
+  "idno": "FR.INED.TEST001",
+  "titl": "Enquête de démonstration FLUVIAL",
+  "subTitl": "Validation automatisée des exports DDI",
+  "altTitl": "FLUVIAL demonstration survey",
+  "parTitl": "FLUVIAL demo survey",
+  "abstract": "Métadonnées synthétiques utilisées par la CI pour vérifier que chaque export DDI produit par FLUVIAL reste valide par rapport aux schémas officiels.",
+  "citLONG": "Enquête de démonstration FLUVIAL [fichier de données]. Ined.",
+  "citCOURT": "Démonstration FLUVIAL",
+  "IDNo@DOI": "10.0000/fluvi.al",
+  "prodDate": "2024-05",
+  "distDate": "2024-06-15",
+  "rspStmt": [
+    {
+      "docDscr@AuthEnty": "Équipe métadonnées",
+      "docDscr@AuthEnty@affliliation": ["Service des enquêtes, Ined"]
+    }
+  ],
+  "rech": [
+    {
+      "AuthEnty": "Chercheuse Exemple",
+      "AuthEnty@affiliation": ["Ined"]
+    },
+    {
+      "AuthEnty": "Chercheur Exemple",
+      "AuthEnty@affiliation": ["Université de démonstration"]
+    }
+  ],
+  "ingeref": ["Référent Exemple"],
+  "contrib": [
+    {
+      "othId": "Contributeur Exemple",
+      "othId@affiliation": ["Ined"],
+      "othId@role": "Conceptualisation"
+    }
+  ],
+  "producerHandler": [
+    {
+      "producer": "Ined",
+      "producer@role": "Producteur"
+    }
+  ],
+  "distrbtr": [
+    {
+      "distrbtr.name": "Ined",
+      "distrbtr.ID": "FR.INED",
+      "distrbtr.abbr": "Ined",
+      "distrbtr.URI": "https://www.ined.fr"
+    }
+  ],
+  "financer": [
+    {
+      "financer@name": "Agence de financement",
+      "financer@number": "ANR-00-0000"
+    }
+  ],
+  "website": "https://example.org/enquete",
+  "keywords": [
+    {
+      "keyword": "Démographie",
+      "keyword@vocabURI": "https://vocabularies.cessda.eu/v2/codes/TopicClassification/4.2.2/Demography"
+    },
+    {
+      "keyword": "Santé",
+      "keyword@vocabURI": "https://vocabularies.cessda.eu/v2/codes/TopicClassification/4.2.2/Health"
+    }
+  ],
+  "topcClas@Ined": ["1. Population"],
+  "topcClas@Cessda": ["Demography"],
+  "nation": ["France"],
+  "geogCover": "France métropolitaine",
+  "analyUnit": 19928,
+  "universe": "Personnes majeures résidant en France métropolitaine.",
+  "dataKind": "Données d'enquête; Données administratives",
+  "timePrd": [
+    {
+      "timePrd@start": "2020-01-01",
+      "timePrd@end": "2021-12-31"
+    }
+  ],
+  "collDate": [
+    {
+      "collDate@start": "2020-03",
+      "collDate@end": "2020-06",
+      "collDate@cycle": "1"
+    },
+    {
+      "collDate@event": "start",
+      "collDate@start": "2021-01"
+    },
+    {
+      "collDate@event": "end",
+      "collDate@start": "2021-02",
+      "collDate@cycle": "Questionnaire test"
+    }
+  ],
+  "dataCollectors": [
+    {
+      "dataCollector": "Ined",
+      "dataCollector@abbr": "Ined"
+    }
+  ],
+  "collModeCV": [27735],
+  "collMode": "Questionnaire auto-administré en ligne.",
+  "resInstruCV": [16770],
+  "resInstru": "Questionnaire structuré en six modules.",
+  "collSitu": "Collecte menée sans incident majeur.",
+  "frequenc": "Enquête à passage unique.",
+  "timeMeth": [19928],
+  "sampProcVC": [25206],
+  "sampProc": "Échantillon de volontaires.",
+  "respRate": "Taux de réponse de 42 %.",
+  "weight": "Pondération par calage sur marges.",
+  "cleanOps": "Contrôles de cohérence et nettoyage des valeurs extrêmes.",
+  "dataAppr": "Évaluation de la qualité des données de démonstration.",
+  "madProgedo": true,
+  "verStmts": [
+    {
+      "verStmt.id": "1.0",
+      "verStmt.text": "Version initiale",
+      "verStmt.date": "2024-05-01"
+    }
+  ],
+  "relStdies": [
+    {
+      "relStdy": "Étude reliée de démonstration",
+      "relStdy@URI": "https://example.org/etude-reliee"
+    }
+  ],
+  "relMats": [
+    {
+      "relMat": "Questionnaire",
+      "relMat@description": "Questionnaire papier de démonstration",
+      "relMat@url": "https://example.org/questionnaire.pdf"
+    }
+  ],
+  "relCit@arch": "https://example.org/bibliographie-archined",
+  "relCit@ged": "https://example.org/bibliographie-zotero",
+  "fileDscrs": [
+    {
+      "fileName": "demo_data",
+      "fileCont": "Fichier de démonstration",
+      "caseQnty": "1000",
+      "varQnty": "42",
+      "fileType": ["SPSS", "CSV"],
+      "file.verStmts": [
+        {
+          "file.verStmt.id": "1.0",
+          "file.verStmt.txt": "Première version du fichier",
+          "file.verStmt.date": "2024-05-01"
+        }
+      ]
+    }
+  ]
+}
