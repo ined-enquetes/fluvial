@@ -9,6 +9,12 @@
 
 export type DdiVersion = '2.6' | '2.5' | '2.1';
 
+/** DDI Lifecycle versions supported by the export endpoint. */
+export type DdiLifecycleVersion = '3.3' | '4.0';
+
+/** Every DDI flavour the application can export. */
+export type DdiExportVersion = DdiVersion | DdiLifecycleVersion;
+
 export type XmlAttrs = Record<
   string,
   string | number | boolean | null | undefined

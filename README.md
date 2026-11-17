@@ -61,7 +61,7 @@
 
 <img src="images/Screenshot.png" alt="Application screenshot" width="60%" height="auto">
 
-FLUVIAL is a application created by [French Institute for Demographic Studies (INED)](https://ined.fr), aiming to help collaborative documenting of the institution surveys', ultimately generate [DDI](https://ddialliance.org/) Codebook files.
+FLUVIAL is a application created by [French Institute for Demographic Studies (INED)](https://ined.fr), aiming to help collaborative documenting of the institution surveys', ultimately generate [DDI](https://ddialliance.org/) Codebook files (2.6, 2.5, 2.1) and DDI Lifecycle files (3.3 XML, 4.0 JSON).
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -130,9 +130,9 @@ When creating or editing an instance, the administrator selects which questionna
 
 Existing installations are backwards compatible: instances created before this feature have no questionnaire selection and keep using `data/survey-template.json`. That legacy file is also listed in the admin interface as the **Questionnaire historique**, so it remains selectable even if the `data/questionnaires/` folder is missing from an old data volume.
 
-The admin interface can generate a DDI Codebook export (2.6, 2.5 or 2.1) on demand from the stored JSON metadata. The JSON storage format is left unchanged; the XML is produced when the download is requested.
+The admin interface can generate a DDI export on demand from the stored JSON metadata. DDI Codebook 2.6, 2.5 and 2.1 are XML; DDI Lifecycle 3.3 is XML and DDI Lifecycle 4.0 is JSON. The JSON storage format is left unchanged; the file is produced when the download is requested. The Lifecycle conversion table is parametric and lives in `data/ddi-lifecycle-mapping.json`.
 
-Each instance also has an **Importer un DDI** button. Importing a DDI Codebook 2.6, 2.5 or 2.1 file replaces the instance metadata with the values found in the XML. Some FLUVIAL-specific information cannot be represented in DDI (for example numeric controlled-vocabulary codes or application-only fields), so import is best-effort. The instance logo file is preserved because it is an application asset rather than study metadata.
+Each instance also has an **Importer un DDI** button. Importing a DDI Codebook 2.6, 2.5 or 2.1 file replaces the instance metadata with the values found in the XML. Some FLUVIAL-specific information cannot be represented in DDI (for example numeric controlled-vocabulary codes or application-only fields), so import is best-effort. The instance logo file is preserved because it is an application asset rather than study metadata. DDI Lifecycle exports (3.3 and 4.0) are export-only for now.
 
 For the full DDI workflow, the field registry and validation steps, see [`docs/DDI.md`](docs/DDI.md) (English) or [`docs/DDI.fr.md`](docs/DDI.fr.md) (français).
 
@@ -160,7 +160,7 @@ metadata-template/
     │   │       │   │       └── route.ts  # Import DDI Codebook (2.6 / 2.5 / 2.1)
     │   │       │   ├── export/
     │   │       │   │   ├── ddi/
-    │   │       │   │   │   └── route.ts  # Export DDI Codebook (2.6 / 2.5 / 2.1)
+    │   │       │   │   │   └── route.ts  # Export DDI Codebook + Lifecycle (2.x / 3.3 / 4.0)
     │   │       │   │   └── route.ts      # Export JSON
     │   │       │   └── route.ts
     │   │       └── save/                 # Reponses save
@@ -184,6 +184,7 @@ metadata-template/
     │   │   │   └── responses.json        # Responses of Survey
     │   │   └── archives/                 # Deleted questionnaires (whole folder moved here)
     │   ├── survey-template.json          # Legacy fallback questionnaire
+    │   ├── ddi-lifecycle-mapping.json    # Parametric DDI Lifecycle 3.3 / 4.0 conversion table
     │   ├── instances.json                # Instances
     │   └── admins.json                   # Tokens admin
     ├── lib/
@@ -194,6 +195,10 @@ metadata-template/
     │   ├── ddiImport.ts                  # DDI Codebook XML importer (2.6 / 2.5 / 2.1)
     │   ├── ddiMapping.ts                 # Declarative mapping registry (export + import)
     │   ├── ddiXml.ts                     # Shared DDI XML primitive helpers
+    │   ├── ddiLifecycleMapping.ts        # Typed loader for the Lifecycle conversion table
+    │   ├── ddiLifecycle.ts               # Shared Lifecycle study model and date helpers
+    │   ├── ddiLifecycle33.ts             # DDI Lifecycle 3.3 XML generator
+    │   ├── ddiLifecycle40.ts             # DDI Lifecycle 4.0 JSON generator
     │   └── saveUtils.ts                  # Service to handle JSON files writing/reading
     └── types/
         └── index.ts

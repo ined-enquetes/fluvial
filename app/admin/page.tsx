@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
-import type { DdiVersion } from '@/lib/ddi';
+import type { DdiExportVersion } from '@/lib/ddiXml';
 import { HistoryEntry, QuestionnaireInfo, SurveyInstance } from '@/types';
 
 function formatHistoryValue(value: unknown): string {
@@ -27,13 +27,14 @@ function formatHistoryDate(timestamp: string): string {
 }
 
 const DDI_DOCS: Record<
-  DdiVersion,
+  DdiExportVersion,
   {
     label: string;
     spec: string;
-    fields: string;
+    fields?: string;
     schema: string;
-    elements: string;
+    schemaLabel: string;
+    elements?: string;
   }
 > = {
   '2.6': {
@@ -42,6 +43,7 @@ const DDI_DOCS: Record<
     fields: 'https://docs.ddialliance.org/DDI-Codebook/2.6/xmlschema/index.html',
     schema:
       'https://ddialliance.org/Specification/DDI-Codebook/2.6/XMLSchema/codebook.xsd',
+    schemaLabel: 'Schéma XSD',
     elements:
       'https://docs.ddialliance.org/DDI-Codebook/2.6/xmlschema/schemas/codebook_xsd/elements',
   },
@@ -51,6 +53,7 @@ const DDI_DOCS: Record<
     fields: 'https://docs.ddialliance.org/DDI-Codebook/2.5/xmlschema/index.html',
     schema:
       'https://ddialliance.org/Specification/DDI-Codebook/2.5/XMLSchema/codebook.xsd',
+    schemaLabel: 'Schéma XSD',
     elements:
       'https://docs.ddialliance.org/DDI-Codebook/2.5/xmlschema/schemas/codebook_xsd/elements',
   },
@@ -60,12 +63,27 @@ const DDI_DOCS: Record<
     fields: 'https://docs.ddialliance.org/DDI-Codebook/2.5/xmlschema/index.html',
     schema:
       'https://ddialliance.org/Specification/DDI-Codebook/2.1/XMLSchema/Version2-1.xsd',
+    schemaLabel: 'Schéma XSD',
     elements:
       'https://docs.ddialliance.org/DDI-Codebook/2.5/xmlschema/schemas/codebook_xsd/elements',
   },
+  '3.3': {
+    label: 'DDI Lifecycle 3.3',
+    spec: 'https://ddialliance.org/Specification/DDI-Lifecycle/3.3/',
+    schema:
+      'https://ddialliance.org/Specification/DDI-Lifecycle/3.3/XMLSchema/instance.xsd',
+    schemaLabel: 'Schéma XSD',
+  },
+  '4.0': {
+    label: 'DDI Lifecycle 4.0',
+    spec: 'https://ddialliance.org/Specification/DDI-Lifecycle/4.0/',
+    schema:
+      'https://ddialliance.org/Specification/DDI-Lifecycle/4.0/JSONSchema/lifecycle40.schema.json',
+    schemaLabel: 'Schéma JSON',
+  },
 };
 
-const DDI_ELEMENT_NAMES = [
+const CODEBOOK_ELEMENT_NAMES = [
   'codeBook',
   'docDscr',
   'stdyDscr',
@@ -107,6 +125,27 @@ const DDI_ELEMENT_NAMES = [
   'verStmt',
 ];
 
+const LIFECYCLE_ELEMENT_NAMES = [
+  'DDIInstance',
+  'StudyUnit',
+  'DataCollection',
+  'Methodology',
+  'CollectionEvent',
+  'Universe',
+  'OtherMaterialScheme',
+  'OtherMaterial',
+  'Citation',
+  'Coverage',
+];
+
+const DDI_ELEMENT_NAMES: Record<DdiExportVersion, string[]> = {
+  '2.6': CODEBOOK_ELEMENT_NAMES,
+  '2.5': CODEBOOK_ELEMENT_NAMES,
+  '2.1': CODEBOOK_ELEMENT_NAMES,
+  '3.3': LIFECYCLE_ELEMENT_NAMES,
+  '4.0': LIFECYCLE_ELEMENT_NAMES,
+};
+
 export default function AdminPage() {
   const [instances, setInstances] = useState<SurveyInstance[]>([]);
   const [questionnaires, setQuestionnaires] = useState<QuestionnaireInfo[]>([]);
@@ -114,7 +153,7 @@ export default function AdminPage() {
   const [newInstanceName, setNewInstanceName] = useState('');
   const [newQuestionnaire, setNewQuestionnaire] = useState('');
   const [adminConnect, setAdminConnect] = useState(false);
-  const [ddiVersion, setDdiVersion] = useState<DdiVersion>('2.6');
+  const [ddiVersion, setDdiVersion] = useState<DdiExportVersion>('2.6');
 
   const [loading, setLoading] = useState(false);
   const [actionLoadingId, setActionLoadingId] = useState<string | null>(null);
@@ -408,7 +447,10 @@ export default function AdminPage() {
         const a = document.createElement('a');
         a.href = url;
         a.download =
-          fileNameMatch?.[1] ?? `${instanceName}-ddi-${ddiVersion}.xml`;
+          fileNameMatch?.[1] ??
+          `${instanceName}-ddi-${ddiVersion}.${
+            ddiVersion === '4.0' ? 'json' : 'xml'
+          }`;
         document.body.appendChild(a);
         a.click();
         a.remove();
@@ -692,11 +734,13 @@ export default function AdminPage() {
             <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
               <div>
                 <h2 className="text-lg font-semibold tracking-tight">
-                  Export DDI Codebook
+                  Export DDI
                 </h2>
                 <p className="mt-1 max-w-2xl text-sm leading-6 text-black/60">
-                  Le fichier XML est généré à la demande depuis les métadonnées
+                  Le fichier est généré à la demande depuis les métadonnées
                   de l’instance, sans modifier les données JSON existantes.
+                  DDI Codebook produit du XML ; DDI Lifecycle 4.0 produit du
+                  JSON.
                 </p>
               </div>
 
@@ -706,17 +750,31 @@ export default function AdminPage() {
                 </label>
                 <select
                   value={ddiVersion}
-                  onChange={(e) => setDdiVersion(e.target.value as DdiVersion)}
+                  onChange={(e) =>
+                    setDdiVersion(e.target.value as DdiExportVersion)
+                  }
                   className="w-full rounded-2xl border border-[#eee] bg-white px-4 py-3 text-sm outline-none transition focus:border-[#ff564e]"
                 >
                   <option value="2.6">DDI Codebook 2.6</option>
                   <option value="2.5">DDI Codebook 2.5</option>
                   <option value="2.1">DDI Codebook 2.1</option>
+                  <option value="3.3">DDI Lifecycle 3.3 (XML)</option>
+                  <option value="4.0">DDI Lifecycle 4.0 (JSON)</option>
                 </select>
                 {ddiVersion === '2.1' && (
                   <p className="mt-2 text-xs leading-5 text-black/50">
                     DDI 2.1 ne conserve qu’une seule description de fichier
                     (nom, type et version).
+                  </p>
+                )}
+                {ddiVersion === '3.3' && (
+                  <p className="mt-2 text-xs leading-5 text-black/50">
+                    Export XML conforme au schéma DDI Lifecycle 3.3.
+                  </p>
+                )}
+                {ddiVersion === '4.0' && (
+                  <p className="mt-2 text-xs leading-5 text-black/50">
+                    Export JSON conforme au schéma DDI Lifecycle 4.0.
                   </p>
                 )}
               </div>
@@ -731,21 +789,23 @@ export default function AdminPage() {
               >
                 Spécification {DDI_DOCS[ddiVersion].label} ↗
               </a>
-              <a
-                href={DDI_DOCS[ddiVersion].fields}
-                target="_blank"
-                rel="noreferrer"
-                className="font-medium text-black underline decoration-[#ff564e]/40 underline-offset-4 transition hover:text-[#ff564e]"
-              >
-                Documentation des éléments ↗
-              </a>
+              {DDI_DOCS[ddiVersion].fields && (
+                <a
+                  href={DDI_DOCS[ddiVersion].fields}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="font-medium text-black underline decoration-[#ff564e]/40 underline-offset-4 transition hover:text-[#ff564e]"
+                >
+                  Documentation des éléments ↗
+                </a>
+              )}
               <a
                 href={DDI_DOCS[ddiVersion].schema}
                 target="_blank"
                 rel="noreferrer"
                 className="font-medium text-black underline decoration-[#ff564e]/40 underline-offset-4 transition hover:text-[#ff564e]"
               >
-                Schéma XSD ↗
+                {DDI_DOCS[ddiVersion].schemaLabel} ↗
               </a>
             </div>
 
@@ -754,23 +814,34 @@ export default function AdminPage() {
                 Éléments DDI utilisés (documentation officielle)
               </summary>
               <p className="mt-2 text-xs leading-5 text-black/50">
-                Chaque lien ouvre la fiche officielle de l’élément correspondant.
+                {DDI_DOCS[ddiVersion].elements
+                  ? 'Chaque lien ouvre la fiche officielle de l’élément correspondant.'
+                  : 'Les éléments ci-dessous renvoient au schéma officiel de la version sélectionnée.'}
                 {ddiVersion === '2.1'
                   ? ' La documentation de terrain DDI 2.5 est utilisée comme référence, car DDI 2.1 est rétrocompatible.'
                   : ''}
               </p>
               <div className="mt-3 flex flex-wrap gap-2">
-                {DDI_ELEMENT_NAMES.map((name) => (
-                  <a
-                    key={name}
-                    href={`${DDI_DOCS[ddiVersion].elements}/${name}.html`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="rounded-full border border-[#eee] bg-white px-3 py-1 font-mono text-[11px] text-black/70 transition hover:border-[#ff564e] hover:text-[#ff564e]"
-                  >
-                    {name}
-                  </a>
-                ))}
+                {DDI_ELEMENT_NAMES[ddiVersion].map((name) =>
+                  DDI_DOCS[ddiVersion].elements ? (
+                    <a
+                      key={name}
+                      href={`${DDI_DOCS[ddiVersion].elements}/${name}.html`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="rounded-full border border-[#eee] bg-white px-3 py-1 font-mono text-[11px] text-black/70 transition hover:border-[#ff564e] hover:text-[#ff564e]"
+                    >
+                      {name}
+                    </a>
+                  ) : (
+                    <span
+                      key={name}
+                      className="rounded-full border border-[#eee] bg-white px-3 py-1 font-mono text-[11px] text-black/70"
+                    >
+                      {name}
+                    </span>
+                  )
+                )}
               </div>
             </details>
           </section>

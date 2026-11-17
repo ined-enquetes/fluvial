@@ -1,0 +1,545 @@
+{
+  "$comment": "Table de conversion paramétrable entre les réponses SurveyJS (métadonnées à plat) et les exports DDI Lifecycle 3.3 (XML) et 4.0 (JSON). Les générateurs ne codent en dur ni les clés source, ni les noms d'éléments DDI : ils lisent ce fichier. Modifier une correspondance ici change l'export sans toucher au code.",
+  "agency": "fr.ined",
+  "language": "fr",
+  "version": "1",
+  "versions": {
+    "3.3": {
+      "format": "xml",
+      "mediaType": "application/xml",
+      "extension": "xml",
+      "namespace": "ddi:instance:3_3",
+      "schemaLocation": "ddi:instance:3_3 https://ddialliance.org/Specification/DDI-Lifecycle/3.3/XMLSchema/instance.xsd",
+      "root": "ddi:DDIInstance",
+      "prefixes": {
+        "ddi": "ddi:instance:3_3",
+        "r": "ddi:reusable:3_3",
+        "s": "ddi:studyunit:3_3",
+        "d": "ddi:datacollection:3_3",
+        "c": "ddi:conceptualcomponent:3_3",
+        "xhtml": "http://www.w3.org/1999/xhtml",
+        "xsi": "http://www.w3.org/2001/XMLSchema-instance"
+      }
+    },
+    "4.0": {
+      "format": "json",
+      "mediaType": "application/json",
+      "extension": "json",
+      "schema": "https://ddialliance.org/Specification/DDI-Lifecycle/4.0/JSONSchema/lifecycle40.schema.json",
+      "root": "DDIInstance"
+    }
+  },
+  "labels": {
+    "untitled": "Étude sans titre",
+    "studyUnitType": "Étude",
+    "studyUnitName": "Étude",
+    "dataCollectionName": "Collecte des données",
+    "methodologyName": "Méthodologie de collecte",
+    "universeName": "Univers de l'étude",
+    "universeSchemeName": "Univers",
+    "otherMaterialSchemeName": "Ressources associées",
+    "conceptualComponentName": "Composantes conceptuelles",
+    "collectionEventName": "Événement de collecte",
+    "accessMaterialName": "Conditions d'accès aux données",
+    "accessMaterialDescription": "Mise à disposition d'un FPR (Fichier de Production et de Recherche) via Quetelet Progedo.",
+    "documentationMaterialName": "Documentation DDI",
+    "documentationMaterialDescription": "Documentation DDI de l'étude générée par FLUVIAL.",
+    "referentRole": "Ingénieur référent",
+    "technicalProducerRole": "Production des métadonnées",
+    "producerRole": "Producteur",
+    "distributorRole": "Diffuseur",
+    "metadataTeamRole": "Équipe de production des métadonnées",
+    "studyWebsiteMaterialName": "Site web de l'enquête",
+    "dataArchiveMaterialName": "DataIned",
+    "archinedMaterialName": "Bibliographie Archined",
+    "zoteroMaterialName": "Bibliographie Zotero",
+    "shortCitationMaterialName": "Citation courte",
+    "fileTypeLabel": "Fichier de données",
+    "subjectLabel": "Sujet",
+    "keywordLabel": "Mot-clé"
+  },
+  "vocabularies": {
+    "analysisUnit": "https://vocabularies.cessda.eu/v2/codes/AnalysisUnit/2.0.2/",
+    "modeOfCollection": "https://vocabularies.cessda.eu/v2/codes/ModeOfCollection/5.0.0/",
+    "typeOfInstrument": "https://vocabularies.cessda.eu/v2/codes/TypeOfInstrument/1.1.2/",
+    "timeMethod": "https://vocabularies.cessda.eu/v2/codes/TimeMethod/1.2.3/",
+    "samplingProcedure": "https://vocabularies.cessda.eu/v2/codes/SamplingProcedure/2.0.0/",
+    "topicClassification": "https://vocabularies.cessda.eu/v2/codes/TopicClassification/4.2.2/",
+    "countryNames": "https://vocabularies.cessda.eu/v2/codes/CountryNamesAndCodes/1.0.0/",
+    "kindOfData": "https://vocabularies.cessda.eu/v2/codes/KindOfData/1.0.0/"
+  },
+  "sources": {
+    "study": {
+      "id": [
+        "idno"
+      ],
+      "title": [
+        "titl",
+        "title"
+      ],
+      "subtitle": [
+        "subTitl"
+      ],
+      "alternateTitle": [
+        "altTitl"
+      ],
+      "parallelTitle": [
+        "parTitl"
+      ],
+      "abstract": [
+        "abstract"
+      ],
+      "doi": [
+        "IDNo@DOI",
+        "doi"
+      ],
+      "website": [
+        "website",
+        "url"
+      ],
+      "longCitation": [
+        "citLONG"
+      ],
+      "shortCitation": [
+        "citCOURT"
+      ],
+      "productionDate": [
+        "prodDate"
+      ],
+      "distributionDate": [
+        "distDate"
+      ],
+      "authors": "rech",
+      "contributors": "contrib",
+      "referents": "ingeref",
+      "metadataTeam": "rspStmt",
+      "producers": "producerHandler",
+      "distributors": "distrbtr",
+      "funders": "financer",
+      "versionStatements": "verStmts"
+    },
+    "coverage": {
+      "keywords": "keywords",
+      "inedTopics": "topcClas@Ined",
+      "cessdaTopics": "topcClas@Cessda",
+      "countries": "nation",
+      "geographicCoverage": "geogCover",
+      "analysisUnits": [
+        "analyUnit",
+        "anlyUnit"
+      ],
+      "universe": "universe",
+      "timePeriods": "timePrd",
+      "kindsOfData": "dataKind"
+    },
+    "method": {
+      "collectionDates": "collDate",
+      "collectionModes": "collModeCV",
+      "collectionModeDetail": "collMode",
+      "instruments": "resInstruCV",
+      "instrumentDetail": "resInstru",
+      "timeMethods": "timeMeth",
+      "samplingProcedures": "sampProcVC",
+      "samplingDetail": "sampProc",
+      "dataCollectors": "dataCollectors",
+      "frequency": "frequenc",
+      "collectionSituation": "collSitu",
+      "weighting": "weight",
+      "cleaning": "cleanOps",
+      "responseRate": "respRate",
+      "dataQuality": [
+        "dataAppr",
+        "Évaluation de la qualité des données"
+      ]
+    },
+    "materials": {
+      "relatedMaterials": "relMats",
+      "relatedStudies": "relStdies",
+      "archined": "relCit@arch",
+      "zotero": "relCit@ged"
+    },
+    "access": {
+      "progedo": "madProgedo"
+    },
+    "files": {
+      "descriptions": "fileDscrs"
+    }
+  },
+  "itemFields": {
+    "authors": {
+      "name": [
+        "AuthEnty",
+        "name"
+      ],
+      "affiliation": [
+        "AuthEnty@affiliation",
+        "AuthEnty@affliliation",
+        "affiliation"
+      ],
+      "role": []
+    },
+    "contributors": {
+      "name": [
+        "othId",
+        "name"
+      ],
+      "affiliation": [
+        "othId@affiliation",
+        "othId@affliliation",
+        "affiliation"
+      ],
+      "role": [
+        "othId@role",
+        "role"
+      ]
+    },
+    "metadataTeam": {
+      "name": [
+        "docDscr@AuthEnty",
+        "AuthEnty",
+        "name"
+      ],
+      "affiliation": [
+        "docDscr@AuthEnty@affliliation",
+        "docDscr@AuthEnty@affiliation",
+        "AuthEnty@affiliation",
+        "affiliation"
+      ],
+      "role": []
+    },
+    "producers": {
+      "name": [
+        "producer",
+        "name"
+      ],
+      "affiliation": [],
+      "role": [
+        "producer@role",
+        "role"
+      ]
+    },
+    "distributors": {
+      "name": [
+        "distrbtr.name",
+        "name"
+      ],
+      "abbr": [
+        "distrbtr.abbr",
+        "abbr"
+      ],
+      "uri": [
+        "distrbtr.URI",
+        "URI",
+        "url"
+      ],
+      "id": [
+        "distrbtr.ID",
+        "ID"
+      ],
+      "affiliation": [
+        "distrbtr@affiliation",
+        "affiliation"
+      ]
+    },
+    "funders": {
+      "name": [
+        "financer@name",
+        "name"
+      ],
+      "role": [
+        "financer@role",
+        "role"
+      ],
+      "grant": [
+        "financer@number",
+        "number"
+      ]
+    },
+    "dataCollectors": {
+      "name": [
+        "dataCollector",
+        "name"
+      ],
+      "abbr": [
+        "dataCollector@abbr",
+        "abbr"
+      ],
+      "affiliation": [
+        "dataCollector@affiliation",
+        "affiliation"
+      ]
+    },
+    "keywords": {
+      "name": [
+        "keyword",
+        "value",
+        "label",
+        "name"
+      ],
+      "uri": [
+        "keyword@vocabURI",
+        "vocabURI",
+        "uri"
+      ]
+    },
+    "relatedMaterials": {
+      "name": [
+        "relMat",
+        "name",
+        "title"
+      ],
+      "description": [
+        "relMat@description",
+        "description"
+      ],
+      "url": [
+        "relMat@url",
+        "relMat@URI",
+        "url",
+        "question10"
+      ]
+    },
+    "relatedStudies": {
+      "name": [
+        "relStdy",
+        "name",
+        "title"
+      ],
+      "url": [
+        "relStdy@URI",
+        "URI",
+        "url"
+      ]
+    },
+    "files": {
+      "name": [
+        "fileName",
+        "name"
+      ],
+      "content": [
+        "fileCont",
+        "content"
+      ],
+      "cases": [
+        "caseQnty",
+        "cases"
+      ],
+      "variables": [
+        "varQnty",
+        "variables"
+      ],
+      "types": [
+        "fileType"
+      ],
+      "versions": [
+        "file.verStmts"
+      ]
+    },
+    "versionStatements": {
+      "id": [
+        "verStmt.id",
+        "id",
+        "version"
+      ],
+      "change": [
+        "verStmt.text",
+        "verStmt.txt",
+        "text",
+        "txt"
+      ],
+      "date": [
+        "verStmt.date",
+        "date"
+      ]
+    },
+    "fileVersionStatements": {
+      "id": [
+        "file.verStmt.id",
+        "id"
+      ],
+      "change": [
+        "file.verStmt.txt",
+        "file.verStmt.text",
+        "txt",
+        "text"
+      ],
+      "date": [
+        "file.verStmt.date",
+        "date"
+      ]
+    },
+    "timePeriods": {
+      "start": [
+        "timePrd@start",
+        "start"
+      ],
+      "end": [
+        "timePrd@end",
+        "end"
+      ],
+      "direct": [
+        "timePrd",
+        "date",
+        "value"
+      ],
+      "event": [
+        "timePrd@event",
+        "event"
+      ],
+      "cycle": [
+        "timePrd@cycle",
+        "cycle"
+      ]
+    },
+    "collectionDates": {
+      "start": [
+        "collDate@start",
+        "start"
+      ],
+      "end": [
+        "collDate@end",
+        "end"
+      ],
+      "direct": [
+        "collDate",
+        "date",
+        "value"
+      ],
+      "event": [
+        "collDate@event",
+        "event"
+      ],
+      "cycle": [
+        "collDate@cycle",
+        "cycle"
+      ]
+    }
+  },
+  "listSeparators": {
+    "kindsOfData": [
+      ",",
+      ";"
+    ]
+  },
+  "elements": {
+    "3.3": {
+      "root": "ddi:DDIInstance",
+      "urn": "r:URN",
+      "studyUnit": "s:StudyUnit",
+      "typeOfStudyUnit": "s:TypeOfStudyUnit",
+      "citation": "r:Citation",
+      "title": "r:Title",
+      "subTitle": "r:SubTitle",
+      "alternateTitle": "r:AlternateTitle",
+      "string": "r:String",
+      "creator": "r:Creator",
+      "creatorName": "r:CreatorName",
+      "creatorRole": "r:CreatorRole",
+      "contributor": "r:Contributor",
+      "contributorName": "r:ContributorName",
+      "contributorRole": "r:ContributorRole",
+      "publisher": "r:Publisher",
+      "publisherName": "r:PublisherName",
+      "publisherRole": "r:PublisherRole",
+      "publicationDate": "r:PublicationDate",
+      "simpleDate": "r:SimpleDate",
+      "startDate": "r:StartDate",
+      "endDate": "r:EndDate",
+      "internationalIdentifier": "r:InternationalIdentifier",
+      "identifierContent": "r:IdentifierContent",
+      "managingAgency": "r:ManagingAgency",
+      "abstract": "r:Abstract",
+      "description": "r:Description",
+      "content": "r:Content",
+      "coverage": "r:Coverage",
+      "topicalCoverage": "r:TopicalCoverage",
+      "spatialCoverage": "r:SpatialCoverage",
+      "temporalCoverage": "r:TemporalCoverage",
+      "referenceDate": "r:ReferenceDate",
+      "subject": "r:Subject",
+      "keyword": "r:Keyword",
+      "countryCode": "r:CountryCode",
+      "fundingInformation": "r:FundingInformation",
+      "funderRole": "r:FunderRole",
+      "grantNumber": "r:GrantNumber",
+      "analysisUnit": "r:AnalysisUnit",
+      "kindOfData": "r:KindOfData",
+      "otherMaterialScheme": "r:OtherMaterialScheme",
+      "otherMaterialSchemeName": "r:OtherMaterialSchemeName",
+      "otherMaterial": "r:OtherMaterial",
+      "typeOfMaterial": "r:TypeOfMaterial",
+      "externalUrl": "r:ExternalURLReference",
+      "universeReference": "r:UniverseReference",
+      "dataCollectionReference": "r:DataCollectionReference",
+      "methodologyReference": "r:MethodologyReference",
+      "otherMaterialSchemeReference": "r:OtherMaterialSchemeReference",
+      "typeOfObject": "r:TypeOfObject",
+      "conceptualComponent": "c:ConceptualComponent",
+      "conceptualComponentName": "c:ConceptualComponentModuleName",
+      "universeScheme": "c:UniverseScheme",
+      "universeSchemeName": "c:UniverseSchemeName",
+      "universe": "c:Universe",
+      "universeName": "c:UniverseName",
+      "geographyOfUniverse": "c:GeographyOfUniverse",
+      "timePeriod": "c:TimePeriod",
+      "dataCollection": "d:DataCollection",
+      "dataCollectionModuleName": "d:DataCollectionModuleName",
+      "methodology": "d:Methodology",
+      "methodologyName": "d:MethodologyName",
+      "timeMethod": "d:TimeMethod",
+      "typeOfTimeMethod": "d:TypeOfTimeMethod",
+      "samplingProcedure": "d:SamplingProcedure",
+      "typeOfSamplingProcedure": "d:TypeOfSamplingProcedure",
+      "dataCollectionMethodology": "d:DataCollectionMethodology",
+      "typeOfDataCollectionMethodology": "d:TypeOfDataCollectionMethodology",
+      "collectionEvent": "d:CollectionEvent",
+      "collectionEventName": "d:CollectionEventName",
+      "dataCollectionDate": "d:DataCollectionDate",
+      "modeOfCollection": "d:ModeOfCollection",
+      "typeOfModeOfCollection": "d:TypeOfModeOfCollection",
+      "collectionSituation": "d:CollectionSituation",
+      "typeOfCollectionSituation": "d:TypeOfCollectionSituation",
+      "actionToMinimizeLosses": "d:ActionToMinimizeLosses",
+      "typeOfActionToMinimizeLosses": "d:TypeOfActionToMinimizeLosses",
+      "language": "r:Language"
+    },
+    "4.0": {
+      "root": "DDIInstance",
+      "studyUnit": "StudyUnit",
+      "citation": "Citation",
+      "title": "Title",
+      "subTitle": "SubTitle",
+      "alternateTitle": "AlternateTitle",
+      "creator": "Creator",
+      "contributor": "Contributor",
+      "publisher": "Publisher",
+      "publicationDate": "PublicationDate",
+      "internationalIdentifier": "InternationalIdentifier",
+      "abstract": "Abstract",
+      "coverage": "Coverage",
+      "topicalCoverage": "TopicalCoverage",
+      "spatialCoverage": "SpatialCoverage",
+      "temporalCoverage": "TemporalCoverage",
+      "fundingInformation": "FundingInformation",
+      "analysisUnit": "AnalysisUnit",
+      "kindOfData": "KindOfData",
+      "universe": "Universe",
+      "universeReference": "UniverseReference",
+      "dataCollection": "DataCollection",
+      "dataCollectionReference": "DataCollectionReference",
+      "methodology": "Methodology",
+      "methodologyReference": "MethodologyReference",
+      "otherMaterialScheme": "OtherMaterialScheme",
+      "otherMaterialSchemeReference": "OtherMaterialSchemeReference",
+      "otherMaterial": "OtherMaterial",
+      "collectionEvent": "CollectionEvent",
+      "timeMethod": "TimeMethod",
+      "samplingProcedure": "SamplingProcedure",
+      "modeOfCollection": "ModeOfCollection",
+      "collectionSituation": "CollectionSituation",
+      "actionToMinimizeLosses": "ActionToMinimizeLosses",
+      "referenceDate": "ReferenceDate",
+      "studyUnitReference": "StudyUnitReference"
+    }
+  }
+}

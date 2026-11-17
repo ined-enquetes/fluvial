@@ -2,20 +2,45 @@ import { NextRequest, NextResponse } from 'next/server';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 import adminsData from '@/data/admins.json';
-import { DdiVersion, generateDdiCodebook } from '@/lib/ddi';
+import { generateDdiCodebook } from '@/lib/ddi';
+import type {
+  DdiExportVersion,
+  DdiLifecycleVersion,
+} from '@/lib/ddiXml';
+import { generateDdiLifecycle33 } from '@/lib/ddiLifecycle33';
+import { generateDdiLifecycle40 } from '@/lib/ddiLifecycle40';
+import { lifecycleVersionConfig } from '@/lib/ddiLifecycleMapping';
 import { loadResponses } from '@/lib/saveUtils';
 import { SurveyInstance } from '@/types';
 
 const INSTANCES_FILE = join(process.cwd(), 'data/instances.json');
 
-const SUPPORTED_VERSIONS: DdiVersion[] = ['2.6', '2.5', '2.1'];
+const SUPPORTED_VERSIONS: DdiExportVersion[] = [
+  '2.6',
+  '2.5',
+  '2.1',
+  '3.3',
+  '4.0',
+];
 
-function isDdiVersion(value: string | null): value is DdiVersion {
-  return value !== null && SUPPORTED_VERSIONS.includes(value as DdiVersion);
+function isDdiVersion(value: string | null): value is DdiExportVersion {
+  return (
+    value !== null &&
+    SUPPORTED_VERSIONS.includes(value as DdiExportVersion)
+  );
+}
+
+function isLifecycleVersion(
+  version: DdiExportVersion
+): version is DdiLifecycleVersion {
+  return version === '3.3' || version === '4.0';
 }
 
 /** Build a safe ASCII-ish file name for the download. */
-function buildFileName(instanceName: string, version: DdiVersion): string {
+function buildFileName(
+  instanceName: string,
+  version: DdiExportVersion
+): string {
   const base = instanceName
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
@@ -23,7 +48,11 @@ function buildFileName(instanceName: string, version: DdiVersion): string {
     .replace(/^-+|-+$/g, '')
     .toLowerCase();
 
-  return `${base || 'etude'}-ddi-${version}.xml`;
+  const extension = isLifecycleVersion(version)
+    ? lifecycleVersionConfig(version).extension
+    : 'xml';
+
+  return `${base || 'etude'}-ddi-${version}.${extension}`;
 }
 
 export async function GET(
@@ -42,7 +71,7 @@ export async function GET(
   }
 
   const requestedVersion = request.nextUrl.searchParams.get('version');
-  const version: DdiVersion = isDdiVersion(requestedVersion)
+  const version: DdiExportVersion = isDdiVersion(requestedVersion)
     ? requestedVersion
     : '2.6';
 
@@ -70,14 +99,23 @@ export async function GET(
       );
     }
 
-    const xml = generateDdiCodebook(
-      responsesData as Record<string, unknown>,
-      { version, fallbackTitle: instance.name }
-    );
+    const responses = responsesData as Record<string, unknown>;
+    const options = { fallbackTitle: instance.name };
 
-    return new NextResponse(xml, {
+    const content =
+      version === '3.3'
+        ? generateDdiLifecycle33(responses, options)
+        : version === '4.0'
+          ? generateDdiLifecycle40(responses, options)
+          : generateDdiCodebook(responses, { version, ...options });
+
+    const mediaType = isLifecycleVersion(version)
+      ? lifecycleVersionConfig(version).mediaType
+      : 'application/xml';
+
+    return new NextResponse(content, {
       headers: {
-        'Content-Type': 'application/xml; charset=utf-8',
+        'Content-Type': `${mediaType}; charset=utf-8`,
         'Content-Disposition': `attachment; filename="${buildFileName(
           instance.name,
           version

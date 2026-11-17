@@ -1,10 +1,11 @@
-# DDI Codebook dans FLUVIAL
+# DDI dans FLUVIAL
 
 [English](DDI.md) · **Français**
 
-Ce document explique comment FLUVIAL produit et consomme du XML DDI Codebook,
-comment fonctionne le registre de champs, et comment ajouter un nouveau champ
-de métadonnées sans casser la sortie DDI.
+Ce document explique comment FLUVIAL produit et consomme le DDI. Il couvre le
+XML DDI Codebook (2.6, 2.5, 2.1), les formats DDI Lifecycle en export seule
+(3.3 XML et 4.0 JSON), le fonctionnement du registre de champs, et l'ajout d'un
+nouveau champ de métadonnées sans casser la sortie DDI.
 
 ## Vue d'ensemble
 
@@ -12,15 +13,16 @@ FLUVIAL stocke les métadonnées d'enquête sous la forme d'un **objet JSON plat
 dans `data/responses/<survey-token>/responses.json`. Chaque clé correspond au
 `name` d'une question SurveyJS déclarée dans `data/survey-template.json`.
 
-Le XML DDI est **généré à la demande** à partir de ce JSON. Le format de
-stockage JSON ne change pas lors de l'export. L'import fonctionne dans le sens
-inverse : un fichier DDI est analysé puis converti vers la même structure JSON
-plate, ce qui remplace les métadonnées de l'instance.
+Les fichiers DDI sont **générés à la demande** à partir de ce JSON. Le format de
+stockage JSON ne change pas lors de l'export. Pour le DDI Codebook, l'import
+fonctionne dans le sens inverse : un fichier est analysé puis converti vers la
+même structure JSON plate, ce qui remplace les métadonnées de l'instance. Les
+exports DDI Lifecycle 3.3 et 4.0 sont disponibles en export seule.
 
 Les schémas de la DDI Alliance ne sont **ni téléchargés ni lus à l'exécution**.
-Les URL des XSD sont uniquement écrites dans le XML comme indications
-`xsi:schemaLocation` et reliées depuis l'interface d'administration. Elles
-servent pendant le développement à vérifier que le XML généré est valide.
+Les URL de schéma sont uniquement écrites dans les métadonnées XML/JSON et
+reliées depuis l'interface d'administration. Elles servent pendant le
+développement à vérifier que les fichiers générés sont valides.
 
 ## Fichiers
 
@@ -29,11 +31,16 @@ servent pendant le développement à vérifier que le XML généré est valide.
 | `lib/ddiXml.ts` | Primitives de nœuds XML et rendu (`leaf`, `branch`, `renderNode`, utilitaires de texte). |
 | `lib/ddiMapping.ts` | Registre déclaratif pour les champs simples, plus `mappedNodes()` utilisé par l'export. |
 | `lib/ddi.ts` | Générateur DDI Codebook 2.6 / 2.5 / 2.1 et constructeurs écrits à la main pour les sections complexes. |
+| `lib/ddiLifecycleMapping.ts` | Chargeur typé de la table de conversion Lifecycle paramétrable. |
+| `lib/ddiLifecycle.ts` | Modèle d'étude normalisé partagé par les générateurs Lifecycle. |
+| `lib/ddiLifecycle33.ts` | Générateur DDI Lifecycle 3.3 XML. |
+| `lib/ddiLifecycle40.ts` | Générateur DDI Lifecycle 4.0 JSON. |
 | `lib/ddiImport.ts` | Analyseur DDI et mappage inverse, y compris l'import via le registre. |
 | `app/api/survey/[token]/export/ddi/route.ts` | Point d'accès d'export protégé par l'administrateur. |
 | `app/api/survey/[token]/import/ddi/route.ts` | Point d'accès d'import protégé par l'administrateur. |
 | `app/admin/page.tsx` | Sélecteur de version, liens de documentation, boutons d'export et d'import. |
 | `data/survey-template.json` | Questionnaire SurveyJS ; les `name` des questions deviennent les clés JSON. |
+| `data/ddi-lifecycle-mapping.json` | Table de conversion paramétrable pour DDI Lifecycle 3.3 / 4.0. |
 | `data/responses/<token>/responses.json` | Métadonnées stockées pour une instance d'enquête. |
 
 ## Flux d'export
@@ -42,13 +49,15 @@ servent pendant le développement à vérifier que le XML généré est valide.
 responses.json
     │  JSON plat : { idno, titl, nation: [...], timePrd: [...], ... }
     ▼
-lib/ddi.ts
-    ├── buildTitleStatement / buildStudyCitation / buildStudyInfo
-    ├── buildMethod / buildAccess / buildRelatedMaterials
-    ├── buildFileDescriptions
-    └── mappedNodes(...)  ← champs simples issus de lib/ddiMapping.ts
-    ▼
-XML DDI Codebook 2.6, 2.5 ou 2.1
+lib/ddiLifecycle.ts          lib/ddi.ts
+    │  modèle d'étude normalisé  ├── buildTitleStatement / buildStudyCitation
+    │                            ├── buildMethod / buildAccess
+    │                            ├── buildFileDescriptions
+    │                            └── mappedNodes(...)  ← lib/ddiMapping.ts
+    ├── lib/ddiLifecycle33.ts ──► DDI Lifecycle 3.3 XML
+    └── lib/ddiLifecycle40.ts ──► DDI Lifecycle 4.0 JSON
+
+lib/ddi.ts ──► XML DDI Codebook 2.6, 2.5 ou 2.1
 ```
 
 L'interface d'administration appelle :
@@ -59,8 +68,10 @@ Authorization: Bearer <adminToken>
 ```
 
 La route charge l'instance par son `id`, charge ses réponses par son `token`,
-appelle `generateDdiCodebook()` et renvoie le XML en pièce jointe. La version
-est `2.6` (par défaut), `2.5` ou `2.1`.
+appelle le générateur choisi et renvoie le fichier en pièce jointe. Les versions
+acceptées sont `2.6` (par défaut), `2.5`, `2.1`, `3.3` et `4.0`. Codebook et
+Lifecycle 3.3 renvoient `application/xml` ; Lifecycle 4.0 renvoie
+`application/json`.
 
 ## Flux d'import
 
@@ -280,6 +291,92 @@ dans chaque version activée. Sinon, utilisez le motif existant
 `version === '2.1'` ou ajoutez une restriction `versions` à l'entrée du
 registre.
 
+## DDI Lifecycle 3.3 et 4.0
+
+DDI Lifecycle est un modèle plus récent et modulaire. FLUVIAL exporte deux
+versions :
+
+| | DDI Lifecycle 3.3 | DDI Lifecycle 4.0 |
+| --- | --- | --- |
+| Sérialisation | XML | JSON |
+| Type MIME | `application/xml` | `application/json` |
+| Extension | `.xml` | `.json` |
+| Racine | `ddi:DDIInstance` | `topLevelReferences` + `items` |
+| Générateur | `lib/ddiLifecycle33.ts` | `lib/ddiLifecycle40.ts` |
+
+Les deux générateurs consomment le modèle d'étude normalisé produit par
+`lib/ddiLifecycle.ts`. Ce module lit `responses.json` une seule fois en
+appliquant la table de conversion des clés source ; chaque générateur range
+ensuite le modèle dans l'ordre du schéma de sa version. DDI Lifecycle est
+**disponible en export seule** : l'import continue d'accepter les Codebook 2.6,
+2.5 et 2.1.
+
+### La table de conversion paramétrable
+
+`data/ddi-lifecycle-mapping.json` contient la table de conversion.
+`lib/ddiLifecycleMapping.ts` est le chargeur typé et le seul module qui lit le
+fichier. Les générateurs demandent des valeurs nommées : modifier une clé
+source, un nom d'élément ou un libellé ne demande pas de toucher au code.
+
+| Section | Contenu |
+| --- | --- |
+| `agency`, `language`, `version` | Valeurs par défaut pour l'agence des URN, la langue des métadonnées et la version lorsqu'aucune déclaration de version n'existe dans `responses.json`. |
+| `versions` | Format, type MIME, extension, espace de noms, URL de schéma, nom racine et préfixes XML de chaque version. |
+| `labels` | Libellés français générés : type d'étude, événement de collecte, rôles, noms des ressources, libellé de fichier... |
+| `vocabularies` | URI des vocabulaires contrôlés CESSDA utilisés par `controlledVocabularyURN` / `ControlledVocabularyURI`. |
+| `sources` | Clés JSON plates de chaque valeur logique, par ordre de priorité. Exemple : `analysisUnits: ["analyUnit", "anlyUnit"]` accepte les deux orthographes. |
+| `itemFields` | Clés lues dans les objets répétés (personnes, financeurs, fichiers, dates, déclarations de version). |
+| `listSeparators` | Séparateurs utilisés pour découper une chaîne en plusieurs valeurs ; `dataKind` utilise `,` et `;`. |
+| `elements` | Noms d'éléments XML DDI 3.3 et noms de propriétés JSON DDI 4.0. |
+
+Modifiez directement le fichier JSON puis redémarrez le serveur de
+développement : il est importé statiquement. Le fichier doit rester un JSON
+valide. Un nom manquant déclenche une erreur explicite du type
+`Correspondance DDI Lifecycle 3.3 manquante pour « language ».`
+
+### Résumé des correspondances
+
+| Données FLUVIAL | Emplacement DDI Lifecycle |
+| --- | --- |
+| `titl`, `subTitl`, `altTitl`, `parTitl` | `Citation/Title`, `SubTitle`, `AlternateTitle`. |
+| Auteurs, référents, équipe des métadonnées | `Citation/Creator` (nom et affiliation). |
+| Producteurs, diffuseurs | `Citation/Publisher` avec un code de rôle. |
+| Contributeurs | `Citation/Contributor` avec un code de rôle. |
+| `IDNo@DOI` | `Citation/InternationalIdentifier` avec l'agence `DOI`. |
+| `topcClas@Ined`, `topcClas@Cessda`, `keywords` | `Coverage/TopicalCoverage` (`Subject`, `Keyword`). Les mots-clés conservent leur URI de vocabulaire. |
+| `nation`, `geogCover` | `Coverage/SpatialCoverage` et `Universe/GeographyOfUniverse`. |
+| `timePrd` | `Coverage/TemporalCoverage/ReferenceDate` et `Universe/TimePeriod`. |
+| `analyUnit`, `dataKind` | `StudyUnit/AnalysisUnit`, `StudyUnit/KindOfData`, avec les URI CESSDA. |
+| `financer` | `StudyUnit/FundingInformation`. |
+| `collDate`, `collModeCV`, `collMode`, `collSitu`, `cleanOps` | `DataCollection` → `Methodology` et `CollectionEvent`. |
+| `timeMeth`, `sampProcVC`, `sampProc`, `weight`, `dataAppr` | `Methodology` (`TimeMethod`, `SamplingProcedure`, `DataCollectionMethodology`). |
+| `relMats`, `relStdies`, bibliographies, site web, fichiers, accès Progedo | `OtherMaterialScheme` → entrées `OtherMaterial`. |
+
+Les dates sont normalisées vers les variantes COGS de DDI 4 (`Date`,
+`GYearMonth`, `GYear`, `Duration`...). DDI 3.3 reçoit l'équivalent au format ISO.
+
+En DDI 3.3, l'unité d'étude référence l'univers (`UniverseReference`), la
+composante conceptuelle et la collecte. En DDI 4.0, le document racine contient
+une liste `topLevelReferences` et une liste `items` ; `StudyUnit` pointe vers
+`Universe`, `DataCollection` et `OtherMaterialScheme` avec des objets
+`Reference`, et chaque `OtherMaterial` est un item séparé référencé par le
+schéma.
+
+### Comportement propre à Lifecycle
+
+- Les identifiants dérivent de l'identifiant de l'étude : `fr.ined.<study-id>`
+  pour l'instance, `<study-id>.studyunit`, `<study-id>.event1`, etc. L'URN est
+  `urn:ddi:<agency>:<id>:<version>`.
+- Sans déclaration de version, la version vaut `versions.version` du fichier de
+  correspondance (`1`).
+- Les enregistrements `timePrd` et `collDate` qui séparent une borne en deux
+  entrées (`@event: "start"` puis `@event: "end"`) sont réunis en une seule
+  plage de dates.
+- Les champs sans équivalent direct (par exemple `frequenc`, `respRate`,
+  `resInstru`, les détails de fichiers ou l'indicateur d'accès Progedo) sont
+  écrits comme descriptions ou entrées `OtherMaterial`, afin qu'aucune
+  information ne soit perdue silencieusement.
+
 ## Ordre du schéma et validité
 
 DDI Codebook utilise `xs:sequence` de XML Schema à plusieurs endroits. L'ordre
@@ -305,9 +402,17 @@ Validez toujours après avoir modifié un mappage. Références utiles :
   <https://ddialliance.org/ddi-codebook_v2.1>
 - XSD DDI Codebook 2.1 :
   <https://ddialliance.org/Specification/DDI-Codebook/2.1/XMLSchema/Version2-1.xsd>
+- Spécification DDI Lifecycle 3.3 :
+  <https://ddialliance.org/Specification/DDI-Lifecycle/3.3/>
+- XSD d'entrée DDI Lifecycle 3.3 :
+  <https://ddialliance.org/Specification/DDI-Lifecycle/3.3/XMLSchema/instance.xsd>
+- Spécification DDI Lifecycle 4.0 :
+  <https://ddialliance.org/Specification/DDI-Lifecycle/4.0/>
+- Schéma JSON DDI Lifecycle 4.0 :
+  <https://ddialliance.org/Specification/DDI-Lifecycle/4.0/JSONSchema/lifecycle40.schema.json>
 
 L'interface d'administration expose également ces liens ainsi qu'une liste de
-pastilles de documentation par élément.
+pastilles de documentation par élément pour les versions Codebook.
 
 ## Validation
 
@@ -322,12 +427,23 @@ pastilles de documentation par élément.
 
 3. Valider le XML par rapport au XSD officiel avec n'importe quel validateur
    XML Schema (`xmllint`, oXygen, Visual Studio, .NET `XmlSchemaSet`, etc.).
-   Les schémas 2.6, 2.5 et 2.1 doivent tous indiquer `VALID`.
+   Les schémas 2.6, 2.5, 2.1 et Lifecycle 3.3 doivent tous indiquer `VALID`.
 
-4. Réimporter le fichier exporté et vérifier que le champ apparaît dans
+4. Valider le JSON DDI Lifecycle 4.0 par rapport au schéma JSON officiel, par
+   exemple avec `ajv-cli` :
+
+   ```bash
+   npx ajv-cli@5 validate --spec=draft2020 --strict=false \
+     -s lifecycle40.schema.json -d export.json
+   ```
+
+   Le schéma utilise un vocabulaire d'extension COGS ; `--strict=false` ne
+   désactive que l'avertissement sur les mots-clés inconnus.
+
+5. Réimporter un export Codebook et vérifier que le champ apparaît dans
    `responses.json`.
 
-5. Vérifier qu'un fichier mal formé renvoie toujours HTTP 400 et que les
+6. Vérifier qu'un fichier mal formé renvoie toujours HTTP 400 et que les
    requêtes non authentifiées renvoient HTTP 403.
 
 ## Référence de l'API
@@ -335,11 +451,12 @@ pastilles de documentation par élément.
 ### Export
 
 ```http
-GET /api/survey/<instanceId>/export/ddi?version=2.6|2.5|2.1
+GET /api/survey/<instanceId>/export/ddi?version=2.6|2.5|2.1|3.3|4.0
 Authorization: Bearer <adminToken>
 ```
 
-- `200` avec `application/xml` et un nom de fichier de téléchargement.
+- `200` avec `application/xml` (Codebook 2.x et Lifecycle 3.3) ou
+  `application/json` (Lifecycle 4.0) et un nom de fichier de téléchargement.
 - `403` lorsque le jeton d'administration est absent ou invalide.
 - `404` lorsque l'instance n'existe pas ou n'a pas de réponses.
 - `500` en cas d'échec de la génération.
@@ -389,9 +506,14 @@ L'import n'est pas l'inverse parfait de l'export. Limites connues :
 
 ## Fichiers associés
 
-- Générateur : `lib/ddi.ts`
-- Registre : `lib/ddiMapping.ts`
+- Générateur Codebook : `lib/ddi.ts`
+- Registre Codebook : `lib/ddiMapping.ts`
 - Utilitaires XML : `lib/ddiXml.ts`
+- Table de conversion Lifecycle : `data/ddi-lifecycle-mapping.json`
+- Chargeur Lifecycle : `lib/ddiLifecycleMapping.ts`
+- Modèle partagé Lifecycle : `lib/ddiLifecycle.ts`
+- Générateur Lifecycle 3.3 : `lib/ddiLifecycle33.ts`
+- Générateur Lifecycle 4.0 : `lib/ddiLifecycle40.ts`
 - Importeur : `lib/ddiImport.ts`
 - Questionnaire : `data/survey-template.json`
 - Réponses stockées : `data/responses/<token>/responses.json`
